@@ -26,6 +26,7 @@ cap = cv2.VideoCapture(0)
 # 엑셀 연동하여 빅데이터 어찌어찌 연결해보기
 
 framenum = 0
+imgnum = 0
 
 while True:
     if framenum == 3:
@@ -33,7 +34,6 @@ while True:
     else :
         framenum = framenum + 1
     ret, frame = cap.read()
-    imgnum = 0
     if ret:
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -48,13 +48,14 @@ while True:
                 color = [(0, 0, 255), (0, 255, 0)]
                 for face in face_list:
                     x, y, w, h = face
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
-
-                cv2.imshow('video', frame)
-
+                    # cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
+                # cv2.imshow('video', frame)
                 if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
+                    cv2.imshow('video', frame)
                     crop = frame[y + 3:y + h - 3, x + 3:x + w - 3]
-                    imgpath = ('C:/Users/dbstn/Desktop/cropimg%06d.jpg', imgnum)
+                    imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' %(imgnum))
+                    imgnum = imgnum +1
                     cv2.imwrite(imgpath, crop)
 
             # client_id = "Nzp_FC__3rbf3tRsbXHR"
