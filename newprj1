@@ -8,6 +8,7 @@ import requests
 import cv2
 import numpy as np
 import json
+import time
 
 # import matplotlib.pyplot as plt
 try:
@@ -18,15 +19,22 @@ except ImportError:
 cap = cv2.VideoCapture(0, cv2.CAP_V4L)
 cap = cv2.VideoCapture(0)
 
-
-
-# 인식되면 소리도 나게끔
-# 현재 오류는 framenum이 계속 0으로 초기화됨
-# 깃허브에 지속적으로 올리기 (연결해놓기)
-# 엑셀 연동하여 빅데이터 어찌어찌 연결해보기
+client_id = "Nzp_FC__3rbf3tRsbXHR"
+client_secret = "eagFGHv7lI"
+url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
+# url = "https://openapi.naver.com/v1/vision/celebrity" # 유명인 얼굴인식
+# files = {'image': open('C:/Users/dbstn/Desktop/cropimg%d.jpg', 'rb')}
 
 framenum = 0
 imgnum = 0
+
+
+
+# 인식되면 소리도 나게끔
+# 깃허브에 지속적으로 올리기 (연결해놓기)
+# 엑셀 연동하여 빅데이터 어찌어찌 연결해보기
+# 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
+
 
 while True:
     if framenum == 3:
@@ -48,8 +56,9 @@ while True:
                 color = [(0, 0, 255), (0, 255, 0)]
                 for face in face_list:
                     x, y, w, h = face
-                    # cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
+                    # cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3) #n번째가 아닌 인식되는 즉시 즉시를 보려면 이 코드 사용
                 # cv2.imshow('video', frame)
+
                 if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
                     cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
                     cv2.imshow('video', frame)
@@ -58,36 +67,77 @@ while True:
                     imgnum = imgnum +1
                     cv2.imwrite(imgpath, crop)
 
-            # client_id = "Nzp_FC__3rbf3tRsbXHR"
-            # client_secret = "eagFGHv7lI"
-            # url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
-            # # url = "https://openapi.naver.com/v1/vision/celebrity" # 유명인 얼굴인식
-            # files = {'image': open('C:/Users/dbstn/Desktop/KakaoTalk_20200225_200242795.jpg', 'rb')}
-            # headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
-            # response = requests.post(url, files=files, headers=headers)
-            # rescode = response.status_code
-            # if (rescode == 200):
-            #     print(response.text)
-            #
-            #     data = json.loads(
-            #         response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
-            #     for i in data['faces']:
-            #         facegender = i['gender']['value']  # json data의 객체배열을 python으로 출력하고싶음
-            #         faceage = i['age']['value']
-            #         faceemo = i['emotion']['value']
-            #         facepose = i['pose']['value']
-            #         print("감지된 얼굴의 성별은 {}입니다.".format(facegender))
-            #         print("감지된 얼굴의 나이는 {}입니다.".format(faceage))
-            #         print("감지된 얼굴의 감정은 {}입니다.".format(faceemo))
-            #         print("감지된 얼굴의 방향은 {}입니다.".format(facepose))
-            #         # 조건문으로 frontal_face 빼고는 다 제외해야 더 정확도가 올라가지않을까 싶음
-            #         # 광고를 내보내는 조건의 성별,나이 말고도 감정도 넣으면 좋을거같음
-            # else:
-            #     print("Error Code:" + rescode)
+                    # time.sleep(1) #저장되기전에 read로 넘어가면 안되기때문에 추가
+
+                    files = {'image': open(imgpath, 'rb')}
+                    headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
+                    response = requests.post(url, files=files, headers=headers)
+                    rescode = response.status_code
+                    if (rescode == 200):
+                        print(response.text)
+                        data = json.loads(response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
+                        for i in data['faces']:
+                            facegender = i['gender']['value']  # json data의 객체배열을 python으로 출력하고싶음
+                            faceage = i['age']['value']
+                            faceemo = i['emotion']['value']
+                            facepose = i['pose']['value']
+                            print("감지된 얼굴의 성별은 {}입니다.".format(facegender))
+                            print("감지된 얼굴의 나이는 {}입니다.".format(faceage))
+                            print("감지된 얼굴의 감정은 {}입니다.".format(faceemo))
+                            print("감지된 얼굴의 방향은 {}입니다.".format(facepose))
+                            # 조건문으로 frontal_face 빼고는 다 제외해야 더 정확도가 올라가지않을까 싶음
+                            # 광고를 내보내는 조건의 성별,나이 말고도 감정도 넣으면 좋을거같음
+                    else:
+                        print("Error Code:" + rescode)
+
+                    # 여기서부터 조건문 들어가서 광고 실행시켜야됨. 무슨 조건 걸건지, 에러시 break 해서 어디로 돌아갈건지 코드짜기
+                    # 한 명일때 여러 명 일때 동작이 다르게 하는 것도 여기서부터 갈라져야됨
+                    # if facepose is
 
 cap.release()
 
 cv2.destroyAllWindows()
+
+
+
+
+###########따로따로 초기 코드#############
+
+# while True:
+#     if framenum == 3:
+#         framenum = 0
+#     else :
+#         framenum = framenum + 1
+#     ret, frame = cap.read()
+#     if ret:
+#         if cv2.waitKey(1) & 0xFF == ord('q'):
+#             break
+#         else:
+#             img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+#             cascade_file = "C:/opencv-4.2.0/haarcascade_frontalface_default.xml "  # https://github.com/opencv/opencv/tree/master/data/haarcascades xml파일 다운경로
+#             cascade = cv2.CascadeClassifier(cascade_file)
+#             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
+#                                                  minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠
+#             if len(face_list) > 0:
+#                 print(face_list)
+#                 color = [(0, 0, 255), (0, 255, 0)]
+#                 for face in face_list:
+#                     x, y, w, h = face
+#                     # cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
+#                 # cv2.imshow('video', frame)
+#                 if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
+#                     cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
+#                     cv2.imshow('video', frame)
+#                     crop = frame[y + 3:y + h - 3, x + 3:x + w - 3]
+#                     imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' %(imgnum))
+#                     imgnum = imgnum +1
+#                     cv2.imwrite(imgpath, crop)
+# cap.release()
+#
+# cv2.destroyAllWindows()
+
+
+
 
 # client_id = "Nzp_FC__3rbf3tRsbXHR"
 # client_secret = "eagFGHv7lI"
