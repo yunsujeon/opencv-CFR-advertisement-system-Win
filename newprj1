@@ -23,9 +23,15 @@ cap = cv2.VideoCapture(0)
 # 인식되면 소리도 나게끔
 # 현재 오류는 framenum이 계속 0으로 초기화됨
 # 깃허브에 지속적으로 올리기 (연결해놓기)
+# 엑셀 연동하여 빅데이터 어찌어찌 연결해보기
 
+framenum = 0
 
 while True:
+    if framenum == 3:
+        framenum = 0
+    else :
+        framenum = framenum + 1
     ret, frame = cap.read()
     imgnum = 0
     if ret:
@@ -37,7 +43,6 @@ while True:
             cascade = cv2.CascadeClassifier(cascade_file)
             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
                                                  minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠
-            framenum = 0
             if len(face_list) > 0:
                 print(face_list)
                 color = [(0, 0, 255), (0, 255, 0)]
