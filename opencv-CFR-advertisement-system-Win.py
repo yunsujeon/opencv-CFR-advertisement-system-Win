@@ -5,6 +5,7 @@
 import requests
 import cv2
 import json
+import numpy as np
 
 try:
     import Image
@@ -22,7 +23,6 @@ framenum = 0
 imgnum = 0
 
 
-# 인식되면 소리도 나게끔
 # 영상은 클라우드에 / 조건과 이에따른 영상제목은 엑셀,office에 / 코드상 조건이 맞으면 엑셀,office 가서 랜덤으로 영상제목을 읽어온다 / 클라우드 접속하여 그 영상을 불러온다.
 # 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
 
@@ -87,6 +87,13 @@ while True:
             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
                                                  minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠
 
+            # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
+            # while (vid.isOpened()):
+            #     ret2, frame2 = vid.read()
+            #     cv2.imshow('frame2', frame2)
+            #     if cv2.waitKey(1) & 0xFF == 27:
+            #         break
+
             if len(face_list) > 0:  # face가 없을때도 코드가 돌아야 되는데...
                 print(face_list)
                 color = [(0, 0, 255), (0, 255, 0)]
@@ -106,6 +113,15 @@ while True:
                     headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
                     response = requests.post(url, files=files, headers=headers)
                     rescode = response.status_code
+
+                    cv2.namedWindow('ad', cv2.WINDOW_NORMAL)  # cv2.WINDOW_AUTOSIZE도 사용가능
+                    vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4') # 재생할 동영상파일
+                    while True:
+                        rev = vid.read()
+                        if rev == False: #동영상을 끝까지 재생하면 무하루프에서 빠져나온다.
+                            break
+                    vid.release # 자원 메모리 해제
+                    cv2.destroyWindow('ad')
 
                     if (rescode == 200):
                         print(response.text)
@@ -127,6 +143,9 @@ while True:
                         # print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
                         # print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
 
+# 얼굴인식시 square 를 crop 하게 되는데 CFR 에서는 크롭이미지 말고 그외의 것도 판단하나 봄 나이 측정 등의 성능이 떨어짐
+# 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
+
                         facerecog(facepose, agelen, firstage, facegender)
 
                     else:
@@ -135,3 +154,15 @@ while True:
 cap.release()
 
 cv2.destroyAllWindows()
+
+# import cv2
+#
+# vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4') # 재생할 동영상파일
+#
+# while(vid.isOpened()):
+#     ret2,frame2 = vid.read()
+#     cv2.imshow('frame2',frame2)
+#     if cv2.waitKey(1) & 0xFF ==27:
+#         break
+# vid.release()
+# cv2.destroyAllWindows()
