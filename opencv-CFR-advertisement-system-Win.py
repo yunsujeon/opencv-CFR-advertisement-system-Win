@@ -21,9 +21,54 @@ url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
 framenum = 0
 imgnum = 0
 
+
 # 인식되면 소리도 나게끔
 # 영상은 클라우드에 / 조건과 이에따른 영상제목은 엑셀,office에 / 코드상 조건이 맞으면 엑셀,office 가서 랜덤으로 영상제목을 읽어온다 / 클라우드 접속하여 그 영상을 불러온다.
 # 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
+
+def facerecog(faceposes, agelens, firstages, facegenders):
+    iagelens = int(agelens)
+    ifirstages = int(firstages)
+    if faceposes == "frontal_face":
+        if iagelens is 5:
+            if ifirstages is 1:
+                if facegenders == "male":
+                    fin = "남자 10대입니다."
+                elif facegenders == "female":
+                    fin = "여자 10대입니다."
+            elif ifirstages is 2:
+                if facegenders == "male":
+                    fin = "남자 20대입니다."
+                elif facegenders == "female":
+                    fin = "여자 20대입니다."
+            elif ifirstages is 3:
+                if facegenders == "male":
+                    fin = "남자 30대입니다."
+                elif facegenders == "female":
+                    fin = "여자 30대입니다."
+            elif ifirstages is 4:
+                if facegenders == "male":
+                    fin = "남자 40대입니다."
+                elif facegenders == "female":
+                    fin = "여자 40대입니다."
+            elif ifirstages is 5:
+                if facegenders == "male":
+                    fin = "남자 50대입니다."
+                elif facegenders == "female":
+                    fin = "여자 50대입니다."
+            elif 5 < ifirstages < 10:
+                if facegenders == "male":
+                    fin = "남자 60대~90대입니다."
+                elif facegenders == "female":
+                    fin = "여자 60대~90대입니다."
+        if iagelens < 5:
+            if -1 < ifirstages < 10:
+                if facegenders == "male":
+                    fin = "남자 0대입니다."
+                elif facegenders == "female":
+                    fin = "여자 0대입니다."
+        return print(fin)
+
 
 while True:
     if framenum == 3:
@@ -74,64 +119,16 @@ while True:
                             agelen = len(faceage)  # faceage의 총 길이가 5면 최소 10대 이고 3이면 0~5 4이면 6~10 일 수 있다.
                             firstage = faceage[0]  # faceage의 총 길이에 따라 나이대를 구분한다.
                             secondage = faceage[3]  # 나이대를 정확히 하기 위한 두번 째 변수이다.
-                        print("감지된 얼굴의 성별은 {}입니다.".format(facegender))
-                        print("감지된 얼굴의 나이는 {}입니다.".format(faceage))
-                        print("감지된 얼굴의 감정은 {}입니다.".format(faceemo))
-                        print("감지된 얼굴의 방향은 {}입니다.".format(facepose))
-                        print("나이 문자열의 총길이는 {}입니다.".format(agelen))
-                        print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
-                        print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
+                        # print("감지된 얼굴의 성별은 {}입니다.".format(facegender))
+                        # print("감지된 얼굴의 나이는 {}입니다.".format(faceage))
+                        # print("감지된 얼굴의 감정은 {}입니다.".format(faceemo))
+                        # print("감지된 얼굴의 방향은 {}입니다.".format(facepose))
+                        # print("나이 문자열의 총길이는 {}입니다.".format(agelen))
+                        # print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
+                        # print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
 
-                        # 여기서부터 조건문 들어가서 광고 실행시켜야됨. 무슨 조건 걸건지, 에러시 break 해서 어디로 돌아갈건지 코드짜기
-                        # 한 명일때 여러 명 일때 동작이 다르게 하는 것도 여기서부터 갈라져야됨
-                        # 예외처리를 다 해주지 않은 상태이다.
-                        # 더 세분화 할 필요가 있다. 20~20 대와 20~30대는 다르다. 나이대는 5씩잘린다.
-                        if agelen is 5:
-                            print("a")
+                        facerecog(facepose, agelen, firstage, facegender)
 
-                        if facepose == "frontal_face":
-                            if agelen is 5:
-                                if firstage is 1:
-                                    if facegender == "male":
-                                        print("남자 10대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 10대입니다.")
-                                elif firstage is 2:
-                                    if facegender == "male":
-                                        print("남자 20대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 20대입니다.")
-                                elif firstage is 3:
-                                    if facegender == "male":
-                                        print("남자 30대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 30대입니다.")
-                                elif firstage is 4:
-                                    if facegender == "male":
-                                        print("남자 40대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 40대입니다.")
-                                elif firstage is 5:
-                                    if facegender == "male":
-                                        print("남자 50대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 50대입니다.")
-                                elif (firstage >= 6) and (firstage <= 9):
-                                    if facegender == "male":
-                                        print("남자 60대~90대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 60대~90대입니다.")
-                            if agelen <= 4:
-                                if (firstage >= 0) and (firstage <= 9):
-                                    if facegender == "male":
-                                        print("남자 0대입니다.")
-                                    elif facegender == "female":
-                                        print("여자 0대입니다.")
-
-                            # 성별 : 남자
-                            # 나이대 : 유아 / 고등학생이하 / 대학생이하 / 사회초년생 / 30대 / 40대(유아) / 50대(청소년) / 60대 / 70대이상
-                            # 성별 : 여자
-                            # 나이대 : 유아 / 고등학생이하 / 대학생이하 / 사회초년생 / 30대 / 40대(유아) / 50대(청소년) / 60대 / 70대이상
                     else:
                         print("Error Code:" + rescode)
 
