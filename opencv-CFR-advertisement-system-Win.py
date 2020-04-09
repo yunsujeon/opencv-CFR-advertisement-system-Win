@@ -33,42 +33,41 @@ def facerecog(faceposes, agelens, firstages, facegenders):
         if iagelens is 5:
             if ifirstages is 1:
                 if facegenders == "male":
-                    fin = "남자 10대입니다."
+                    fin = 110  #남자 1 여자2 로 구분 나이대는 뒤에 10~ 으로 붙인다. 110은 남자 10대
                 elif facegenders == "female":
-                    fin = "여자 10대입니다."
+                    fin = 210
             elif ifirstages is 2:
                 if facegenders == "male":
-                    fin = "남자 20대입니다."
+                    fin = 120
                 elif facegenders == "female":
-                    fin = "여자 20대입니다."
+                    fin = 220
             elif ifirstages is 3:
                 if facegenders == "male":
-                    fin = "남자 30대입니다."
+                    fin = 130
                 elif facegenders == "female":
-                    fin = "여자 30대입니다."
+                    fin = 230
             elif ifirstages is 4:
                 if facegenders == "male":
-                    fin = "남자 40대입니다."
+                    fin = 140
                 elif facegenders == "female":
-                    fin = "여자 40대입니다."
+                    fin = 240
             elif ifirstages is 5:
                 if facegenders == "male":
-                    fin = "남자 50대입니다."
+                    fin = 150
                 elif facegenders == "female":
-                    fin = "여자 50대입니다."
+                    fin = 250
             elif 5 < ifirstages < 10:
                 if facegenders == "male":
-                    fin = "남자 60대~90대입니다."
+                    fin = 160 # 60~90대로 우선
                 elif facegenders == "female":
-                    fin = "여자 60대~90대입니다."
+                    fin = 260
         if iagelens < 5:
             if -1 < ifirstages < 10:
                 if facegenders == "male":
-                    fin = "남자 0대입니다."
+                    fin = 10  #남자 0대
                 elif facegenders == "female":
-                    fin = "여자 0대입니다."
-        return print(fin)
-
+                    fin = 20
+        return fin
 
 while True:
     if framenum == 3:
@@ -86,7 +85,6 @@ while True:
             cascade = cv2.CascadeClassifier(cascade_file)
             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
                                                  minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠
-
             # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
             # while (vid.isOpened()):
             #     ret2, frame2 = vid.read()
@@ -114,15 +112,6 @@ while True:
                     response = requests.post(url, files=files, headers=headers)
                     rescode = response.status_code
 
-                    cv2.namedWindow('ad', cv2.WINDOW_NORMAL)  # cv2.WINDOW_AUTOSIZE도 사용가능
-                    vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4') # 재생할 동영상파일
-                    while True:
-                        rev = vid.read()
-                        if rev == False: #동영상을 끝까지 재생하면 무하루프에서 빠져나온다.
-                            break
-                    vid.release # 자원 메모리 해제
-                    cv2.destroyWindow('ad')
-
                     if (rescode == 200):
                         print(response.text)
                         data = json.loads(
@@ -146,8 +135,23 @@ while True:
 # 얼굴인식시 square 를 crop 하게 되는데 CFR 에서는 크롭이미지 말고 그외의 것도 판단하나 봄 나이 측정 등의 성능이 떨어짐
 # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
 
-                        facerecog(facepose, agelen, firstage, facegender)
-
+                        res = facerecog(facepose, agelen, firstage, facegender)
+#return 된 fin 에 따라 영상을 재생하는 코드
+                        if res is 10:
+                            print("a")
+                        elif res is 110:
+                            print("b")
+                        elif res is 120:
+                            print("c")
+                        elif res is 130:
+                            print("d")
+                            vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
+                            while vid.isOpened():
+                                ret2, frame2 = vid.read()
+                                cv2.imshow('frame2',frame2)
+                                if cv2.waitKey(1) & 0xFF == 27:
+                                    break
+#영상 재생속도와 영상 재생후 코드가 팅겨버리는 문제 - 연속성
                     else:
                         print("Error Code:" + rescode)
 
