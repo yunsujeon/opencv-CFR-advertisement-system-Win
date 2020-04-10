@@ -23,7 +23,6 @@ url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
 framenum = 0
 imgnum = 0
 
-
 # 영상은 클라우드에 / 조건과 이에따른 영상제목은 엑셀,office에 / 코드상 조건이 맞으면 엑셀,office 가서 랜덤으로 영상제목을 읽어온다 / 클라우드 접속하여 그 영상을 불러온다.
 # 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
 
@@ -34,7 +33,7 @@ def facerecog(faceposes, agelens, firstages, facegenders):
         if iagelens is 5:
             if ifirstages is 1:
                 if facegenders == "male":
-                    fin = 110  #남자 1 여자2 로 구분 나이대는 뒤에 10~ 으로 붙인다. 110은 남자 10대
+                    fin = 110  # 남자 1 여자2 로 구분 나이대는 뒤에 10~ 으로 붙인다. 110은 남자 10대
                 elif facegenders == "female":
                     fin = 210
             elif ifirstages is 2:
@@ -59,42 +58,37 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     fin = 250
             elif 5 < ifirstages < 10:
                 if facegenders == "male":
-                    fin = 160 # 60~90대로 우선
+                    fin = 160  # 60~90대로 우선
                 elif facegenders == "female":
                     fin = 260
         if iagelens < 5:
             if -1 < ifirstages < 10:
                 if facegenders == "male":
-                    fin = 10  #남자 0대
+                    fin = 10  # 남자 0대
                 elif facegenders == "female":
                     fin = 20
         return fin
 
 while True:
-    if framenum == 3:
+    if framenum == 2:
         framenum = 0
     else:
         framenum = framenum + 1
+
     ret, frame = cap.read()
 
     if ret:
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         else:
-            ori = frame.copy() # 나중에 frame 의 원본을 쓰기 위해 ori 에 복사한 것으로 얼굴을 인식시킨다.
+            ori = frame.copy()  # 나중에 frame 의 원본을 쓰기 위해 ori 에 복사한 것으로 얼굴을 인식시킨다.
             img_gray = cv2.cvtColor(ori, cv2.COLOR_BGR2GRAY)
             cascade_file = "C:/opencv-4.2.0/haarcascade_frontalface_default.xml "  # https://github.com/opencv/opencv/tree/master/data/haarcascades xml파일 다운경로
             cascade = cv2.CascadeClassifier(cascade_file)
             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
-                                                 minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠
-            # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
-            # while (vid.isOpened()):
-            #     ret2, frame2 = vid.read()
-            #     cv2.imshow('frame2', frame2)
-            #     if cv2.waitKey(1) & 0xFF == 27:
-            #         break
+                                                 minSize=(150, 150))  # 가까이있는 얼굴 인식하고싶어서 150으로 올려둠 멀리있는 얼굴 인식하려면 낮추기
 
-            if len(face_list) > 0:  # face가 없을때도 코드가 돌아야 되는데...
+            if len(face_list) > 0:  # face가 없을때도 코드가 돌아야 되는데... 뒤에 else 문 채워주기
                 print(face_list)
                 color = [(0, 0, 255), (0, 255, 0)]
                 for face in face_list:
@@ -102,16 +96,19 @@ while True:
                     # cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3) #n번째가 아닌 인식되는 즉시 즉시를 보려면 이 코드 사용
                 # cv2.imshow('video', frame)
 
-                if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
+                if framenum == 2:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
                     cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
                     cv2.imshow('video', ori)
+
                     # crop = ori[y + 3:y + h - 3, x + 3:x + w - 3] #크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
                     # imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
-                    crop = frame # crop 이지만 크롭하지 않은 전체 이미지를 저장해서 CFR이 인식하도록 함. 추후 수정필요
+
+                    crop = frame  # crop 이지만 크롭하지 않은 전체 이미지를 저장해서 CFR이 인식하도록 함. 추후 수정필요
                     imgpath = ('C:/Users/dbstn/Desktop/nene/img%d.png' % (imgnum))
                     imgnum = imgnum + 1
                     cv2.imwrite(imgpath, crop)
                     files = {'image': open(imgpath, 'rb')}
+# 파일을 저장하지 않고 바로 쓸수는 없는지 생각해보기 files = frame 으로 하면 안되더라.
 
                     headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
                     response = requests.post(url, files=files, headers=headers)
@@ -136,12 +133,11 @@ while True:
                         # print("나이 문자열의 총길이는 {}입니다.".format(agelen))
                         # print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
                         # print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
-
-# 얼굴인식시 square 를 crop 하게 되는데 CFR 에서는 크롭이미지 말고 그외의 것도 판단하나 봄 나이 측정 등의 성능이 떨어짐
-# 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
+ # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
 
                         res = facerecog(facepose, agelen, firstage, facegender)
-#return 된 fin 에 따라 영상을 재생하는 코드
+
+                        # return 된 fin 에 따라 영상을 재생하는 코드
                         if res is 10:
                             print("a")
                         elif res is 110:
@@ -150,39 +146,61 @@ while True:
                             print("c")
                         elif res is 130:
                             print("d")
+                            cv2.namedWindow('ad', cv2.WINDOW_NORMAL)
+                            cv2.setWindowProperty('ad', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
                             vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
                             fps = vid.get(cv2.CAP_PROP_FPS)
-                            delay = round(1000/fps)/1000
+                            delay = round(1000 / fps) / 1000  # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
                             while True:
                                 ret2, frame2 = vid.read()
                                 if ret2:
-                                    cv2.imshow('ad',frame2)
+                                    cv2.imshow('ad', frame2)
                                     if cv2.waitKey(1) & 0xFF == 27:
                                         break
                                     time.sleep(delay)
                                 else:
                                     break
                             vid.release()
-                            cv2.destroyAllWindows() # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
+                            cv2.destroyAllWindows()  # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
 
-#영상 재생속도 영상의 소리
+                    # 영상 재생속도 영상의 소리
+
                     else:
                         print("Error Code:" + rescode)
 
+            # !!!!!!!!!!!!!!중요!!!!!!!!!!!!!!!
             # else: # face list 가 없을 때 예외처리방법 작성 필요
 
 cap.release()
 
 cv2.destroyAllWindows()
 
+
+
+
+
+
+
+
+
+
+
+#
 # import cv2
+# import time
 #
 # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4') # 재생할 동영상파일
-#
-# while(vid.isOpened()):
-#     ret2,frame2 = vid.read()
-#     cv2.imshow('frame2',frame2)
-#     if cv2.waitKey(1) & 0xFF ==27:
+# fps = vid.get(cv2.CAP_PROP_FPS)
+# delay = round(1000/fps)/1000 # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
+# while True:
+#     ret2, frame2 = vid.read()
+#     if ret2:
+#         cv2.imshow('ad',frame2)
+#         if cv2.waitKey(1) & 0xFF == 27:
+#             break
+#         time.sleep(delay)
+#     else:
 #         break
+#
 # vid.release()
 # cv2.destroyAllWindows()
