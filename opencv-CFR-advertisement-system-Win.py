@@ -80,7 +80,8 @@ while True:
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
         else:
-            img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            ori = frame.copy() # 나중에 frame 의 원본을 쓰기 위해 ori 에 복사한 것으로 얼굴을 인식시킨다.
+            img_gray = cv2.cvtColor(ori, cv2.COLOR_BGR2GRAY)
             cascade_file = "C:/opencv-4.2.0/haarcascade_frontalface_default.xml "  # https://github.com/opencv/opencv/tree/master/data/haarcascades xml파일 다운경로
             cascade = cv2.CascadeClassifier(cascade_file)
             face_list = cascade.detectMultiScale(img_gray, scaleFactor=1.1, minNeighbors=3,
@@ -101,13 +102,16 @@ while True:
                 # cv2.imshow('video', frame)
 
                 if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3)
-                    cv2.imshow('video', frame)
-                    crop = frame[y + 3:y + h - 3, x + 3:x + w - 3]
-                    imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
+                    cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
+                    cv2.imshow('video', ori)
+                    # crop = ori[y + 3:y + h - 3, x + 3:x + w - 3] #크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
+                    # imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
+                    crop = frame # crop 이지만 크롭하지 않은 전체 이미지를 저장해서 CFR이 인식하도록 함. 추후 수정필요
+                    imgpath = ('C:/Users/dbstn/Desktop/nene/img%d.png' % (imgnum))
                     imgnum = imgnum + 1
                     cv2.imwrite(imgpath, crop)
                     files = {'image': open(imgpath, 'rb')}
+
                     headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
                     response = requests.post(url, files=files, headers=headers)
                     rescode = response.status_code
@@ -146,14 +150,21 @@ while True:
                         elif res is 130:
                             print("d")
                             vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
-                            while vid.isOpened():
-                                ret2, frame2 = vid.read()
-                                cv2.imshow('frame2',frame2)
-                                if cv2.waitKey(1) & 0xFF == 27:
+                            while True:
+                                ret2,frame2 = vid.read()
+                                if ret2:
+                                    cv2.imshow('ad',frame2)
+                                    if cv2.waitKey(1) & 0xFF == 27:
+                                        break
+                                else:
                                     break
-#영상 재생속도와 영상 재생후 코드가 팅겨버리는 문제 - 연속성
+                            vid.release()
+                            cv2.destroyAllWindows()
+#영상 재생속도 영상의 소리
                     else:
                         print("Error Code:" + rescode)
+
+            # else: # face list 가 없을 때 예외처리방법 작성 필요
 
 cap.release()
 
