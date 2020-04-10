@@ -5,6 +5,7 @@
 import requests
 import cv2
 import json
+import time
 import numpy as np
 
 try:
@@ -150,16 +151,20 @@ while True:
                         elif res is 130:
                             print("d")
                             vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
+                            fps = vid.get(cv2.CAP_PROP_FPS)
+                            delay = round(1000/fps)/1000
                             while True:
-                                ret2,frame2 = vid.read()
+                                ret2, frame2 = vid.read()
                                 if ret2:
                                     cv2.imshow('ad',frame2)
                                     if cv2.waitKey(1) & 0xFF == 27:
                                         break
+                                    time.sleep(delay)
                                 else:
                                     break
                             vid.release()
-                            cv2.destroyAllWindows()
+                            cv2.destroyAllWindows() # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
+
 #영상 재생속도 영상의 소리
                     else:
                         print("Error Code:" + rescode)
