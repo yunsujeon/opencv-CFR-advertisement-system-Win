@@ -7,6 +7,9 @@ import cv2
 import json
 import time
 import numpy as np
+from moviepy.editor import VideoFileClip
+import pygame
+from pygame.locals import *
 
 try:
     import Image
@@ -22,6 +25,7 @@ url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
 
 framenum = 0
 imgnum = 0
+pygame.init() #라이브러리 초기화 안해줘도 되긴함
 
 # 영상은 클라우드에 / 조건과 이에따른 영상제목은 엑셀,office에 / 코드상 조건이 맞으면 엑셀,office 가서 랜덤으로 영상제목을 읽어온다 / 클라우드 접속하여 그 영상을 불러온다.
 # 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
@@ -133,6 +137,7 @@ while True:
                         # print("나이 문자열의 총길이는 {}입니다.".format(agelen))
                         # print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
                         # print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
+
  # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
 
                         res = facerecog(facepose, agelen, firstage, facegender)
@@ -146,22 +151,33 @@ while True:
                             print("c")
                         elif res is 130:
                             print("d")
-                            cv2.namedWindow('ad', cv2.WINDOW_NORMAL)
-                            cv2.setWindowProperty('ad', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-                            vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
-                            fps = vid.get(cv2.CAP_PROP_FPS)
-                            delay = round(1000 / fps) / 1000  # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
-                            while True:
-                                ret2, frame2 = vid.read()
-                                if ret2:
-                                    cv2.imshow('ad', frame2)
-                                    if cv2.waitKey(1) & 0xFF == 27:
-                                        break
-                                    time.sleep(delay)
-                                else:
-                                    break
-                            vid.release()
-                            cv2.destroyAllWindows()  # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
+
+                            #여기서 위로 올려도 될만한 문장들은 위로 올리기 = 코드정리하기
+                            #아래 cv 로 작성된 영상재생 코드는 소리가 안나는 버전이다.
+                            # cv2.namedWindow('ad', cv2.WINDOW_NORMAL)
+                            # cv2.setWindowProperty('ad', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                            # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')  # 재생할 동영상파일
+                            # fps = vid.get(cv2.CAP_PROP_FPS)
+                            # delay = round(1000 / fps) / 1000  # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
+                            # while True:
+                            #     ret2, frame2 = vid.read()
+                            #     if ret2:
+                            #         cv2.imshow('ad', frame2)
+                            #         if cv2.waitKey(1) & 0xFF == 27:
+                            #             break
+                            #         time.sleep(delay)
+                            #     else:
+                            #         break
+                            # vid.release()
+                            # cv2.destroyAllWindows()  # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
+
+                            #아래 pygame과 moviepy로 작성된 코드는 소리가 나는 코드이다.
+                            # screen =  pygame.display.set_mode((720,480), FULLSCREEN|HWSURFACE|DOUBLEBUF) #하드웨어가속, 더블버퍼
+                            pygame.display.set_caption('My video!')
+                            screen = pygame.display.set_mode((720,480), FULLSCREEN)
+                            clip = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
+                            clip.preview()
+                            pygame.quit()
 
                     # 영상 재생속도 영상의 소리
 
@@ -176,10 +192,15 @@ cap.release()
 cv2.destroyAllWindows()
 
 
-
-
-
-
+# pygame 과 moviepy 로 비디오 재생
+# from moviepy.editor import VideoFileClip
+# import pygame
+#
+# pygame.display.set_caption('My video!')
+#
+# clip = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
+# clip.preview()
+# pygame.quit()
 
 
 
