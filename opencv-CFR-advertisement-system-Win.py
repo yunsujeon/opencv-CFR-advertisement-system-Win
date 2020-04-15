@@ -2,6 +2,7 @@
 # 결과를 엑셀 또는 서버에 저장하도록 하기
 # 영상처리를 먼저 해서 얼굴이 걸리면 CFR을 실행하도록 하기
 
+import speech_recognition as sr
 import requests
 import cv2
 import json
@@ -186,7 +187,6 @@ while True:
             # else: # face list 가 없을 때 예외처리방법 작성 필요
 
 cap.release()
-
 cv2.destroyAllWindows()
 
 
@@ -201,10 +201,7 @@ cv2.destroyAllWindows()
 # pygame.quit()
 
 
-
-
-
-#
+# # opencv 로 비디오 재생
 # import cv2
 # import time
 #
@@ -220,6 +217,30 @@ cv2.destroyAllWindows()
 #         time.sleep(delay)
 #     else:
 #         break
-#
 # vid.release()
 # cv2.destroyAllWindows()
+
+
+# #음성인식 google speech_recognition 이용
+# import speech_recognition as sr
+# r = sr.Recognizer()
+# mic = sr.Microphone()
+# with mic as source:
+#     audio = r.listen(source)
+# print(r.recognize_google(audio,language='ko=KR'))
+
+
+# #pocketsphinx 설치실패.. pip install pocketsphinx 리눅스에서 도전
+# import speech_recognition as sr
+# from pocketsphinx import pocketsphinx
+# from sphinxbase import sphinxbase
+# r = sr.Recognizer()
+# with sr.Microphone() as source:
+#     print("Say something!")
+#     audio = r.listen(source)
+# try:
+#     print("Sphinx thinks you said " + r.recognize_sphinx(audio))
+# except sr.UnknownValueError:
+#     print("Sphinx could not understand audio")
+# except sr.RequestError as e:
+#     print("Sphinx error; {0}".format(e))
