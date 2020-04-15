@@ -172,14 +172,12 @@ while True:
                             # cv2.destroyAllWindows()  # cv2.destroyWindows(vid) 로 했어서 연속재생이 안됐었음
 
                             #아래 pygame과 moviepy로 작성된 코드는 소리가 나는 코드이다.
-                            # screen =  pygame.display.set_mode((720,480), FULLSCREEN|HWSURFACE|DOUBLEBUF) #하드웨어가속, 더블버퍼
-                            pygame.display.set_caption('My video!')
-                            screen = pygame.display.set_mode((720,480), FULLSCREEN)
+                            # # screen =  pygame.display.set_mode((720,480), FULLSCREEN|HWSURFACE|DOUBLEBUF) #하드웨어가속, 더블버퍼
+                            # pygame.display.set_caption('My video!')
+                            # screen = pygame.display.set_mode((720,480), FULLSCREEN)
                             clip = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
-                            clip.preview()
+                            clip.preview(fullscreen=True)
                             pygame.quit()
-
-                    # 영상 재생속도 영상의 소리
 
                     else:
                         print("Error Code:" + rescode)
