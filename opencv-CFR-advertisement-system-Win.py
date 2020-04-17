@@ -194,39 +194,47 @@
 # cv2.destroyAllWindows()
 
 
+def recognize(audio):
+    try:
+        return r.recognize_google(audio,language='en=US')
+    except sr.UnknownValueError:
+    # except LookupError:
+        print("음성을 말해주세요")
+        return ''
 
 # pygame 과 moviepy 로 비디오 재생 # pygame없어도되는듯
 from moviepy.editor import VideoFileClip
-import cv2
+import subprocess
 import speech_recognition as sr
-import ctypes
+# import ctypes #해상도를 가져오기 위함
 # import moviepy
 # import pygame
 # pygame.display.set_caption('My video!')
-user32 = ctypes.windll.user32
-screen_width = user32.GetSystemMetrics(0)
-screen_height = user32.GetSystemMetrics(1)
+# user32 = ctypes.windll.user32
+# screen_width = user32.GetSystemMetrics(0)
+# screen_height = user32.GetSystemMetrics(1)
 clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
 clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
-sttimage = cv2.imread('C:/Users/dbstn/Desktop/snow.png', cv2.IMREAD_COLOR)
-r = sr.Recognizer()
-mic = sr.Microphone()
-clip1.preview(fullscreen=True)
+# clip1.preview(fullscreen=True)
+clip1.preview()
 clip1.close()
-cv2.namedWindow('stt',cv2.WINDOW_NORMAL)
-cv2.setWindowProperty('stt',cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
-# while True:
-#
-#     if
-cv2.imshow('stt',sttimage)
-cv2.waitKey(0)
-
+print("이미지 오픈")
+p = subprocess.Popen('python imviewer.py')
+print("음성인식 시작")
+r = sr.Recognizer()
+print("a")
+mic = sr.Microphone()
+print("b")
 with mic as source:
-    audio = r.listen(source)
-# sttfinal = r.recognize_google(audio,language='ko=KR')
-sttfinal = r.recognize_google(audio,language='en=US')
-if sttfinal is 'snow':# 조건이 만족되면
-    cv2.destroyAllWindows()
+    while True:
+        audio = r.listen(source)
+        print("c")
+        sttfinal = recognize(audio)
+        print("d")
+        if sttfinal is 'snow':# 조건이 만족되면
+            p.kill()
+            break
+print("e")
 clip2.preview(fullscreen=True)
 clip2.close()
 # pygame.quit()
@@ -235,10 +243,10 @@ clip2.close()
 # # opencv 로 비디오 재생
 # import cv2
 # import time
-#
 # vid = cv2.VideoCapture('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4') # 재생할 동영상파일
 # fps = vid.get(cv2.CAP_PROP_FPS)
-# delay = round(1000/fps)/1000 # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
+# # 원래 /1000이 맞지만 사양따라 딜레이가 달라서 /1300으로 해줌 가변적임.
+# delay = round(1000/fps)/1300 # frame 계산해서 29.7 frame 일 경우 33ms마다 1장 나타나게 했지만 생각보다 딜레이가 더걸림
 # while True:
 #     ret2, frame2 = vid.read()
 #     if ret2:
