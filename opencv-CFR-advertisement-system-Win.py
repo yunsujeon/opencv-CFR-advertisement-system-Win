@@ -222,19 +222,20 @@ print("이미지 오픈")
 p = subprocess.Popen('python imviewer.py')
 print("음성인식 시작")
 r = sr.Recognizer()
-print("a")
 mic = sr.Microphone()
-print("b")
 with mic as source:
     while True:
+        print("말하세여")
         audio = r.listen(source)
-        print("c")
+        print("들었어요")
         sttfinal = recognize(audio)
-        print("d")
-        if sttfinal is 'snow':# 조건이 만족되면
+        print("함수에서 반환함")
+        if sttfinal is "snow":# 조건이 만족되면
             p.kill()
             break
-print("e")
+        else:
+            print (sttfinal)
+print("영상틀어야지?")
 clip2.preview(fullscreen=True)
 clip2.close()
 # pygame.quit()
