@@ -201,23 +201,18 @@ def recognize(audio):
     # except LookupError:
         print("음성을 말해주세요")
         return ''
-
-# pygame 과 moviepy 로 비디오 재생 # pygame없어도되는듯
+# pygame 과 moviepy 로 비디오 재생
 from moviepy.editor import VideoFileClip
 import subprocess
 import speech_recognition as sr
-# import ctypes #해상도를 가져오기 위함
 # import moviepy
-# import pygame
-# pygame.display.set_caption('My video!')
-# user32 = ctypes.windll.user32
-# screen_width = user32.GetSystemMetrics(0)
-# screen_height = user32.GetSystemMetrics(1)
+import pygame
 clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
 clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
-# clip1.preview(fullscreen=True)
-clip1.preview()
-clip1.close()
+pygame.display.set_caption('first video!')
+# clip1.preview()
+clip1.preview(fullscreen=True)
+pygame.quit()
 print("이미지 오픈")
 p = subprocess.Popen('python imviewer.py')
 print("음성인식 시작")
@@ -230,14 +225,17 @@ with mic as source:
         print("들었어요")
         sttfinal = recognize(audio)
         print("함수에서 반환함")
-        if sttfinal is "snow":# 조건이 만족되면
+        if sttfinal == "snow":# 조건이 만족되면
             p.kill()
             break
         else:
             print (sttfinal)
 print("영상틀어야지?")
+pygame.display.set_caption('second video!')
+# clip2.preview()
 clip2.preview(fullscreen=True)
-clip2.close()
+pygame.quit()
+# clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
 # pygame.quit()
 
 
