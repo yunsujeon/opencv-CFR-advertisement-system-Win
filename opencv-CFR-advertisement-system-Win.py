@@ -31,13 +31,30 @@ pygame.init() #라이브러리 초기화 안해줘도 되긴함
 # 영상은 클라우드에서 다운받는다 / 경로는 플레이되는 경로와 일치 / 엑셀에서 랜덤으로 골라서 영상 재생할 수 있게끔.
 # 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
 
-def recognize(audio):
+def recognize_speech_from_mic(recognizer, microphone): #stt함수
+    if not isinstance(recognizer, sr.Recognizer):
+        raise TypeError("`recognizer` must be `Recognizer` instance")
+    if not isinstance(microphone, sr.Microphone):
+        raise TypeError("`microphone` must be `Microphone` instance")
+    with microphone as source:
+        recognizer.adjust_for_ambient_noise(source) # #  analyze the audio source for 1 second
+        audio = recognizer.listen(source)
+
+    response = {
+        "success": True,
+        "error": None,
+        "transcription": None
+    }
     try:
-        return r.recognize_google(audio,language='en=US')
+        response["transcription"] = recognizer.recognize_google(audio)
+    except sr.RequestError:
+        # API was unreachable or unresponsive
+        response["success"] = False
+        response["error"] = "API unavailable/unresponsive"
     except sr.UnknownValueError:
-    # except LookupError:
-        print("음성을 말해주세요")
-        return ''
+        # speech was unintelligible
+        response["error"] = "Unable to recognize speech"
+    return response
 
 def facerecog(faceposes, agelens, firstages, facegenders):
     iagelens = int(agelens)
@@ -161,7 +178,7 @@ while True:
                         elif res is 130:
                             print("d")
 
-                            clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
+                            clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
                             clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
                             pygame.display.set_caption('first video!')
                             # clip1.preview() #작은화면 디버깅시 이용
@@ -170,20 +187,19 @@ while True:
                             print("이미지 오픈")
                             p = subprocess.Popen('python imviewer.py')
                             print("음성인식 시작")
-                            r = sr.Recognizer()
-                            mic = sr.Microphone()
-                            with mic as source:
-                                while True:
-                                    print("말하세여")
-                                    audio = r.listen(source)
-                                    print("들었어요")
-                                    sttfinal = recognize(audio)
-                                    print("함수에서 반환함")
-                                    if sttfinal == "snow":# 조건이 만족되면
-                                        p.kill()
-                                        break
-                                    else:
-                                        print (sttfinal)
+
+                            while True:
+                                recognizer = sr.Recognizer()
+                                mic = sr.Microphone(device_index=1)
+                                response = recognize_speech_from_mic(recognizer, mic)
+                                response2 = response['transcription']
+                                if response2 =="snow": # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
+                                    print (response2)
+                                    p.kill()
+                                    break
+                                else:
+                                    print (response2)
+
                             print("영상틀어야지?")
                             pygame.display.set_caption('second video!')
                             # clip2.preview() #작은화면 디버깅시 이용
@@ -201,13 +217,43 @@ cap.release()
 cv2.destroyAllWindows()
 
 
-# def recognize(audio):
+
+
+#
+# # 음성인식 주기를 줄였다.
+# def recognize_speech_from_mic(recognizer, microphone):
+#     if not isinstance(recognizer, sr.Recognizer):
+#         raise TypeError("`recognizer` must be `Recognizer` instance")
+#     if not isinstance(microphone, sr.Microphone):
+#         raise TypeError("`microphone` must be `Microphone` instance")
+#     with microphone as source:
+#         recognizer.adjust_for_ambient_noise(source) # #  analyze the audio source for 1 second
+#         audio = recognizer.listen(source)
+#
+#     response = {
+#         "success": True,
+#         "error": None,
+#         "transcription": None
+#     }
 #     try:
-#         return r.recognize_google(audio,language='en=US')
+#         response["transcription"] = recognizer.recognize_google(audio)
+#     except sr.RequestError:
+#         # API was unreachable or unresponsive
+#         response["success"] = False
+#         response["error"] = "API unavailable/unresponsive"
 #     except sr.UnknownValueError:
-#     # except LookupError:
-#         print("음성을 말해주세요")
-#         return ''
+#         # speech was unintelligible
+#         response["error"] = "Unable to recognize speech"
+#     return response
+#
+# # def recognize(audio):
+# #     try:
+# #         return r.recognize_google(audio,language='en=US')
+# #     except sr.UnknownValueError:
+# #     # except LookupError:
+# #         print("음성이 안들어왔는데요?")
+# #         return ''
+#
 # # pygame 과 moviepy 로 비디오 재생
 # from moviepy.editor import VideoFileClip
 # import subprocess
@@ -215,36 +261,66 @@ cv2.destroyAllWindows()
 # # import moviepy
 # import pygame
 #
-# clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/2015oronaminc.mp4')
+# clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
 # clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
 # pygame.display.set_caption('first video!')
 # # clip1.preview()
 # clip1.preview(fullscreen=True)
 # pygame.quit()
-# print("이미지 오픈")
 # p = subprocess.Popen('python imviewer.py')
-# print("음성인식 시작")
-# r = sr.Recognizer()
-# mic = sr.Microphone()
-# with mic as source:
-#     while True:
-#         print("말하세여")
-#         audio = r.listen(source)
-#         print("들었어요")
-#         sttfinal = recognize(audio)
-#         print("함수에서 반환함")
-#         if sttfinal == "snow":# 조건이 만족되면
-#             p.kill()
-#             break
-#         else:
-#             print (sttfinal)
-# print("영상틀어야지?")
+#
+# # r = sr.Recognizer()
+# # mic = sr.Microphone()
+# # with mic as source:
+# #     while True:
+# #         print("말하세여")
+# #         audio = r.listen(source)
+# #         print("들었어요")
+# #         sttfinal = recognize(audio)
+# #         print("함수에서 반환함")
+# #         if sttfinal == "snow":# 조건이 만족되면
+# #             p.kill()
+# #             break
+# #         else:
+# #             print (sttfinal)
+#
+# # while True:
+# #     r = sr.Recognizer()
+# #     with sr.Microphone() as source:
+# #         print("말하세여")
+# #         audio=r.listen(source)
+# #         print("들었어요")
+# #         aed = recognize(audio)
+# #         print("함수에서 반환함")
+# #         if aed == "snow":
+# #             p.kill()
+# #             break
+# #         else:
+# #             print(aed)
+#
+# while True:
+#     recognizer = sr.Recognizer()
+#     mic = sr.Microphone(device_index=1)
+#     response = recognize_speech_from_mic(recognizer, mic)
+#     response2 = response['transcription']
+#     if response2 =="snow":
+#         print (response2)
+#         p.kill()
+#         break
+#     else:
+#         print (response2)
+#
 # pygame.display.set_caption('second video!')
 # # clip2.preview()
 # clip2.preview(fullscreen=True)
 # pygame.quit()
 # # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
 # # pygame.quit()
+
+
+
+
+
 
 
 # # opencv 로 비디오 재생
