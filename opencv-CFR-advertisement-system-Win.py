@@ -173,46 +173,61 @@ while True:
 
                         res = facerecog(facepose, agelen, firstage, facegender)
 
-                        # return 된 fin 에 따라 영상을 재생하는 코드
                         if res is 10:
                             print("a")
                         elif res is 110:
                             print("b")
                         elif res is 120:
                             print("c")
-                        elif res is 130:
+                        elif res is 130: #공통된 코드는 위로 올릴수 있을까 clip 선택부분을 어떻게 처리해서 한번에 이 코드를 써야될듯함.
                             print("d")
-
                             clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
                             clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
                             pygame.display.set_caption('first video!')
                             # clip1.preview() #작은화면 디버깅시 이용
                             clip1.preview(fullscreen=True)
                             pygame.quit()
-                            print("이미지 오픈")
                             p = subprocess.Popen('python imviewer.py')
-                            print("음성인식 시작")
-
                             while True:
                                 recognizer = sr.Recognizer()
                                 mic = sr.Microphone(device_index=1)
                                 response = recognize_speech_from_mic(recognizer, mic)
                                 response2 = response['transcription']
-                                if response2 =="snow": # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
-                                    print (response2)
+                                if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
+                                    print(response2)
                                     p.kill()
                                     break
                                 else:
-                                    print (response2)
-
-                            print("영상틀어야지?")
+                                    print(response2)
                             pygame.display.set_caption('second video!')
                             # clip2.preview() #작은화면 디버깅시 이용
                             clip2.preview(fullscreen=True)
                             pygame.quit()
                             # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
-                            # pygame.quit()
-
+                        elif res is 140:
+                            print("e")
+                        elif res is 150:
+                            print("f")
+                        elif res is 160:
+                            print("g")
+                        elif res is 170:
+                            print("h")
+                        elif res is 20:
+                            print("i")
+                        elif res is 210:
+                            print("j")
+                        elif res is 220:
+                            print("k")
+                        elif res is 230:
+                            print("l")
+                        elif res is 240:
+                            print("m")
+                        elif res is 250:
+                            print("n")
+                        elif res is 260:
+                            print("o")
+                        elif res is 270:
+                            print("p")
                     else:
                         print("Error Code:" + rescode)
             # !!!!!!!!!!!!!!중요!!!!!!!!!!!!!!!
