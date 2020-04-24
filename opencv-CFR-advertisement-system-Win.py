@@ -86,11 +86,16 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     fin = 150
                 elif facegenders == "female":
                     fin = 250
-            elif 5 < ifirstages < 10:
+            elif ifirstages is 6:
                 if facegenders == "male":
-                    fin = 160  # 60~90대로 우선
+                    fin = 160
                 elif facegenders == "female":
                     fin = 260
+            elif 6 < ifirstages < 10:
+                if facegenders == "male":
+                    fin = 170  # 70~90대로 우선
+                elif facegenders == "female":
+                    fin = 270
         if iagelens < 5:
             if -1 < ifirstages < 10:
                 if facegenders == "male":
@@ -316,11 +321,6 @@ cv2.destroyAllWindows()
 # pygame.quit()
 # # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
 # # pygame.quit()
-
-
-
-
-
 
 
 # # opencv 로 비디오 재생
