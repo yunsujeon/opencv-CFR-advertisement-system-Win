@@ -1,4 +1,3 @@
-
 # import time
 # import numpy as np
 # import moviepy
@@ -8,10 +7,12 @@
 import requests
 import cv2
 import json
+import moviepy.editor as mp
 from moviepy.editor import VideoFileClip
 import subprocess
 import speech_recognition as sr
 import pygame
+import pyautogui
 try:
     import Image
 except ImportError:
@@ -26,6 +27,9 @@ url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
 
 framenum = 0
 imgnum = 0
+width, height = pyautogui.size()
+print (width)
+print (height)
 pygame.init() #라이브러리 초기화 안해줘도 되긴함
 
 # 영상은 클라우드에서 다운받는다 / 경로는 플레이되는 경로와 일치 / 엑셀에서 랜덤으로 골라서 영상 재생할 수 있게끔.
@@ -181,11 +185,13 @@ while True:
                             print("c")
                         elif res is 130: #공통된 코드는 위로 올릴수 있을까 clip 선택부분을 어떻게 처리해서 한번에 이 코드를 써야될듯함.
                             print("d")
-                            clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
-                            clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
+                            clip1 = mp.VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
+                            clip2 = mp.VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
+                            clip1_resized = clip1.resize(height=height, width=width)
+                            clip2_resized = clip1.resize(height=height, width=width)
                             pygame.display.set_caption('first video!')
-                            # clip1.preview() #작은화면 디버깅시 이용
-                            clip1.preview(fullscreen=True)
+                            clip1_resized.preview() #작은화면 디버깅시 이용
+                            # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
                             pygame.quit()
                             p = subprocess.Popen('python imviewer.py')
                             while True:
@@ -200,8 +206,8 @@ while True:
                                 else:
                                     print(response2)
                             pygame.display.set_caption('second video!')
-                            # clip2.preview() #작은화면 디버깅시 이용
-                            clip2.preview(fullscreen=True)
+                            clip2_resized.preview() #작은화면 디버깅시 이용
+                            # clip2.preview(fullscreen=True)
                             pygame.quit()
                             # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
                         elif res is 140:
