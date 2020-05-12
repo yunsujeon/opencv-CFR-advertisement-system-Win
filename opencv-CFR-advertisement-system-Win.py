@@ -66,9 +66,9 @@ def facerecog(faceposes, agelens, firstages, facegenders):
     if faceposes == "frontal_face":
         if iagelens is 5:
             if ifirstages is 1:
-                if facegenders == "male":
+                if facegenders == ("male"or"child"):
                     fin = 110  # 남자 1 여자2 로 구분 나이대는 뒤에 10~ 으로 붙인다. 110은 남자 10대
-                elif facegenders == "female":
+                elif facegenders == ("female"or"child"):
                     fin = 210
             elif ifirstages is 2:
                 if facegenders == "male":
@@ -102,9 +102,9 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     fin = 270
         if iagelens < 5:
             if -1 < ifirstages < 10:
-                if facegenders == "male":
+                if facegenders == ("male"or"child"):
                     fin = 10  # 남자 0대
-                elif facegenders == "female":
+                elif facegenders == ("female"or"child"):
                     fin = 20
         return fin
 
@@ -238,7 +238,6 @@ while True:
                         print("Error Code:" + rescode)
             # !!!!!!!!!!!!!!중요!!!!!!!!!!!!!!!
             # else: # face list 가 없을 때 예외처리방법 작성 필요
-
 cap.release()
 cv2.destroyAllWindows()
 
