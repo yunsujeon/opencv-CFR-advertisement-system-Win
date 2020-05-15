@@ -105,7 +105,7 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                 if facegenders == ("male" or "child"):
                     fin = 10  # 남자 0대
                 elif facegenders == ("female" or "child"):
-                    fin = 20
+                    fin = 20 # 여자 0대
         return fin
 
 while True:
@@ -149,10 +149,11 @@ while True:
                 facepose = i['pose']['value']
                 agelen = len(faceage)  # faceage의 총 길이가 5면 최소 10대 이고 3이면 0~9 4이면 6~10 일 수 있다.
                 firstage = faceage[0]  # faceage의 총 길이에 따라 나이대를 구분한다.
-                secondage = faceage[3]  # 나이대를 정확히 하기 위한 두번 째 변수이다. #현재는 적용X
+                #secondage = faceage[3]  # 나이대를 정확히 하기 위한 두번 째 변수이다. #현재는 적용X
                 #나이대를 계산해준다.
-                res = facerecog(facepose, agelen, firstage, facegender)
-                #리스트에 저장해준다.
+            res = facerecog(facepose, agelen, firstage, facegender)
+                #리스트에 저장해준다???
+
                 #res 마다 값을 비교해줘서 최종적인 값을 갖게한다? -> 문제있음 /  알고리즘 필요하다
 
 
