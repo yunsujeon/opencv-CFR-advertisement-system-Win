@@ -7,7 +7,8 @@
 import requests
 import cv2
 import json
-import moviepy.editor as mp
+import random
+import openpyxl
 from moviepy.editor import VideoFileClip
 import subprocess
 import speech_recognition as sr
@@ -17,6 +18,11 @@ try:
     import Image
 except ImportError:
     from PIL import Image
+
+#excel 받아오기
+excel_document = openpyxl.load_workbook('C:/Users/dbstn/Desktop/data.xlsx')
+excel_document.get_sheet_names()
+sheet = excel_document.get_sheet_by_name('Sheet1')
 
 cap = cv2.VideoCapture(0)
 
@@ -31,9 +37,6 @@ width, height = pyautogui.size()
 print (width)
 print (height)
 pygame.init() #라이브러리 초기화 안해줘도 되긴함
-
-# 영상은 클라우드에서 다운받는다 / 경로는 플레이되는 경로와 일치 / 엑셀에서 랜덤으로 골라서 영상 재생할 수 있게끔.
-# 얼굴인식 코드를 지나 CFR을 했을 때 얼굴이 err 이나 frontal img 이외의 이미지일때는 다시 얼굴인식 코드를 하게끔 수정
 
 def recognize_speech_from_mic(recognizer, microphone): #stt함수
     if not isinstance(recognizer, sr.Recognizer):
@@ -61,52 +64,93 @@ def recognize_speech_from_mic(recognizer, microphone): #stt함수
     return response
 
 def facerecog(faceposes, agelens, firstages, facegenders):
+    cell= None
+    start=0
+    end=0
     iagelens = int(agelens)
     ifirstages = int(firstages)
     if faceposes == "frontal_face":
         if iagelens is 5:
             if ifirstages is 1:
-                if facegenders == ("male"or"child"):
-                    fin = 110  # 남자 1 여자2 로 구분 나이대는 뒤에 10~ 으로 붙인다. 110은 남자 10대
-                elif facegenders == ("female"or"child"):
-                    fin = 210
+                if facegenders == ("male"or"child"): #남자10대
+                    selectnum = 22
+                    start = 3
+                    end = 27
+                elif facegenders == ("female"or"child"): #여자10대
+                    selectnum = 22
+                    start = 36
+                    end = 62
             elif ifirstages is 2:
-                if facegenders == "male":
-                    fin = 120
-                elif facegenders == "female":
-                    fin = 220
+                if facegenders == "male": #남자 20대
+                    selectnum = 23
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자20대
+                    selectnum = 23
+                    start = 3
+                    end = 62
             elif ifirstages is 3:
-                if facegenders == "male":
-                    fin = 130
-                elif facegenders == "female":
-                    fin = 230
+                if facegenders == "male": #남자30대
+                    selectnum = 24
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자30대
+                    selectnum = 24
+                    start = 3
+                    end = 62
             elif ifirstages is 4:
-                if facegenders == "male":
-                    fin = 140
-                elif facegenders == "female":
-                    fin = 240
+                if facegenders == "male": #남자 40대
+                    selectnum = 25
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자 40대
+                    selectnum = 25
+                    start = 3
+                    end = 62
             elif ifirstages is 5:
-                if facegenders == "male":
-                    fin = 150
-                elif facegenders == "female":
-                    fin = 250
+                if facegenders == "male": #남자 50대
+                    selectnum = 26
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자 50대
+                    selectnum = 26
+                    start = 3
+                    end = 62
             elif ifirstages is 6:
-                if facegenders == "male":
-                    fin = 160
-                elif facegenders == "female":
-                    fin = 260
+                if facegenders == "male": #남자 60대
+                    selectnum = 27
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자 60대
+                    selectnum = 27
+                    start = 3
+                    end = 62
             elif 6 < ifirstages < 10:
-                if facegenders == "male":
-                    fin = 170  # 70~90대로 우선
-                elif facegenders == "female":
-                    fin = 270
+                if facegenders == "male": #남자 70대이상
+                    selectnum = 28
+                    start = 3
+                    end = 27
+                elif facegenders == "female": #여자 70대이상
+                    selectnum = 28
+                    start = 3
+                    end = 62
         if iagelens < 5:
             if -1 < ifirstages < 10:
-                if facegenders == ("male"or"child"):
-                    fin = 10  # 남자 0대
-                elif facegenders == ("female"or"child"):
-                    fin = 20
-        return fin
+                if facegenders == ("male"or"child"): #남자 0대
+                    selectnum = 21
+                    start = 3
+                    end = 27
+                elif facegenders == ("female"or"child"): #여자 0대
+                    selectnum = 21
+                    start = 3
+                    end = 62
+    while cell is None:
+        print (start)
+        print (end)
+        manrownum = random.randrange(start, end)
+        print(manrownum, selectnum)
+        cell = sheet.cell(row=manrownum, column=selectnum).value
+    return cell
 
 while True:
     if framenum == 2:
@@ -155,8 +199,7 @@ while True:
 
                     if (rescode == 200):
                         print(response.text)
-                        data = json.loads(
-                            response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
+                        data = json.loads(response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
                         for i in data['faces']:
                             facegender = i['gender']['value']  # json data의 객체배열을 python으로 출력하고싶음
                             faceage = i['age']['value']
@@ -175,65 +218,34 @@ while True:
 
  # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
 
-                        res = facerecog(facepose, agelen, firstage, facegender)
+                        cel = facerecog(facepose, agelen, firstage, facegender)
+                        print (cel)
+                        clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/'+cel)
+                        clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/'+cel)
+                        clip1_resized = clip1.resize(height=height, width=width)
+                        clip2_resized = clip1.resize(height=height, width=width)
+                        pygame.display.set_caption('first video!')
+                        clip1_resized.preview()  # 작은화면 디버깅시 이용
+                        # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
+                        pygame.quit()
+                        p = subprocess.Popen('python imviewer.py')
+                        while True:
+                            recognizer = sr.Recognizer()
+                            mic = sr.Microphone(device_index=1)
+                            response = recognize_speech_from_mic(recognizer, mic)
+                            response2 = response['transcription']
+                            if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
+                                print(response2)
+                                p.kill()
+                                break
+                            else:
+                                print(response2)
+                        pygame.display.set_caption('second video!')
+                        clip2_resized.preview()  # 작은화면 디버깅시 이용
+                        # clip2.preview(fullscreen=True)
+                        pygame.quit()
+                        # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
 
-                        if res is 10:
-                            print("a")
-                        elif res is 110:
-                            print("b")
-                        elif res is 120:
-                            print("c")
-                        elif res is 130: #공통된 코드는 위로 올릴수 있을까 clip 선택부분을 어떻게 처리해서 한번에 이 코드를 써야될듯함.
-                            print("d")
-                            clip1 = mp.VideoFileClip('C:/Users/dbstn/Desktop/ad/oronaminc.mp4')
-                            clip2 = mp.VideoFileClip('C:/Users/dbstn/Desktop/ad/adidas.mp4')
-                            clip1_resized = clip1.resize(height=height, width=width)
-                            clip2_resized = clip1.resize(height=height, width=width)
-                            pygame.display.set_caption('first video!')
-                            clip1_resized.preview() #작은화면 디버깅시 이용
-                            # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
-                            pygame.quit()
-                            p = subprocess.Popen('python imviewer.py')
-                            while True:
-                                recognizer = sr.Recognizer()
-                                mic = sr.Microphone(device_index=1)
-                                response = recognize_speech_from_mic(recognizer, mic)
-                                response2 = response['transcription']
-                                if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
-                                    print(response2)
-                                    p.kill()
-                                    break
-                                else:
-                                    print(response2)
-                            pygame.display.set_caption('second video!')
-                            clip2_resized.preview() #작은화면 디버깅시 이용
-                            # clip2.preview(fullscreen=True)
-                            pygame.quit()
-                            # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
-                        elif res is 140:
-                            print("e")
-                        elif res is 150:
-                            print("f")
-                        elif res is 160:
-                            print("g")
-                        elif res is 170:
-                            print("h")
-                        elif res is 20:
-                            print("i")
-                        elif res is 210:
-                            print("j")
-                        elif res is 220:
-                            print("k")
-                        elif res is 230:
-                            print("l")
-                        elif res is 240:
-                            print("m")
-                        elif res is 250:
-                            print("n")
-                        elif res is 260:
-                            print("o")
-                        elif res is 270:
-                            print("p")
                     else:
                         print("Error Code:" + rescode)
             # !!!!!!!!!!!!!!중요!!!!!!!!!!!!!!!
