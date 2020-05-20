@@ -224,10 +224,11 @@ while True:
                         clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/'+cel)
                         clip1_resized = clip1.resize(height=height, width=width)
                         clip2_resized = clip1.resize(height=height, width=width)
-                        pygame.display.set_caption('first video!')
+                        #pygame.display.set_caption('first video!')
                         clip1_resized.preview()  # 작은화면 디버깅시 이용
                         # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
                         pygame.quit()
+                        print ('A')
                         p = subprocess.Popen('python imviewer.py')
                         while True:
                             recognizer = sr.Recognizer()
@@ -240,7 +241,8 @@ while True:
                                 break
                             else:
                                 print(response2)
-                        pygame.display.set_caption('second video!')
+
+                        #pygame.display.set_caption('second video!')
                         clip2_resized.preview()  # 작은화면 디버깅시 이용
                         # clip2.preview(fullscreen=True)
                         pygame.quit()
