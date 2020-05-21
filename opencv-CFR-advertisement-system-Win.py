@@ -219,9 +219,10 @@ while True:
  # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
 
                         cel = facerecog(facepose, agelen, firstage, facegender)
-                        print (cel)
-                        clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad/'+cel)
-                        clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad/'+cel)
+                        print(cel)
+                        cel = cel[:-4]
+                        clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'1'+'.mp4')
+                        clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'2'+'.mp4')
                         clip1_resized = clip1.resize(height=height, width=width)
                         clip2_resized = clip1.resize(height=height, width=width)
                         #pygame.display.set_caption('first video!')
