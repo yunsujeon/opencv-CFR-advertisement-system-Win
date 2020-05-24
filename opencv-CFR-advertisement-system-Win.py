@@ -82,7 +82,8 @@ def facerecog(faceposes, agelens, firstages, facegenders):
     end=0
     iagelens = int(agelens)
     ifirstages = int(firstages)
-    if faceposes == "frontal_face":
+    if faceposes == "frontal_face" or "left_face" or "right_face" or "rotate_face" :
+        faceposenum = 1
         if iagelens is 5:
             if ifirstages is 1:
                 if facegenders == ("male"or"child"): #남자10대
@@ -157,13 +158,21 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     selectnum = 21
                     start = 3
                     end = 62
+    else:
+        faceposenum = 2
+
     while cell is None:
-        print (start)
-        print (end)
-        manrownum = random.randrange(start, end)
-        print(manrownum, selectnum)
-        cell = sheet.cell(row=manrownum, column=selectnum).value
-    return cell
+        if faceposenum ==1:
+            print (start)
+            print (end)
+            manrownum = random.randrange(start, end)
+            print(manrownum, selectnum)
+            cell = sheet.cell(row=manrownum, column=selectnum).value
+            err = 0
+        else :
+            cell = None
+            err = 1
+    return cell, err
 
 while True:
     if framenum == 2:
@@ -196,11 +205,12 @@ while True:
                     cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
                     cv2.imshow('video', ori)
 
-                    # crop = ori[y + 3:y + h - 3, x + 3:x + w - 3] #크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
-                    # imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
+                    crop = ori[y + 5:y + h - 5, x + 5:x + w - 5] #크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
+                    imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
 
-                    crop = frame  # crop 이지만 크롭하지 않은 전체 이미지를 저장해서 CFR이 인식하도록 함. 추후 수정필요
-                    imgpath = ('C:/Users/dbstn/Desktop/nene/img%d.png' % (imgnum))
+                    #crop = frame  # crop 이지만 크롭하지 않은 전체 이미지를 저장해서 CFR이 인식하도록 함. 추후 수정필요
+                    #imgpath = ('C:/Users/dbstn/Desktop/nene/img%d.png' % (imgnum))
+
                     imgnum = imgnum + 1
                     cv2.imwrite(imgpath, crop)
                     files = {'image': open(imgpath, 'rb')}
@@ -213,6 +223,7 @@ while True:
                     if (rescode == 200):
                         print(response.text)
                         data = json.loads(response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
+
                         for i in data['faces']:
                             facegender = i['gender']['value']  # json data의 객체배열을 python으로 출력하고싶음
                             faceage = i['age']['value']
@@ -229,43 +240,43 @@ while True:
                         # print("감지된 얼굴의 첫번째 나이대는 {}0대 입니다.".format(firstage))
                         # print("감지된 얼굴의 두번째 나이대는 {}0대 입니다.".format(secondage))
 
- # 6번문제. 여기서 문제점 : harsscade에서 얼굴을 인식했는데 그 crop 이미지를 불러왔을때 CFR이 보기에 분석이 불가능하다면 팅김 > 다시 앞으로 돌아가는 알고리즘 필요
+                        cel, err = facerecog(facepose, agelen, firstage, facegender)
+                        if err ==0:
+                            print(cel)
+                            cel = cel[:-4]
+                            clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'1'+'.mp4')
+                            clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'2'+'.mp4')
+                            clip1_resized = clip1.resize(height=height, width=width)
+                            clip2_resized = clip1.resize(height=height, width=width)
+                            #pygame.display.set_caption('first video!')
+                            clip1_resized.preview()  # 작은화면 디버깅시 이용
+                            # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
+                            pygame.quit()
+                            print ('A')
+                            p = subprocess.Popen('python imviewer.py')
+                            while True:
+                                recognizer = sr.Recognizer()
+                                mic = sr.Microphone(device_index=1)
+                                response = recognize_speech_from_mic(recognizer, mic)
+                                response2 = response['transcription']
+                                if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
+                                    print(response2)
+                                    p.kill()
+                                    break
+                                else:
+                                    print(response2)
 
-                        cel = facerecog(facepose, agelen, firstage, facegender)
-                        print(cel)
-                        cel = cel[:-4]
-                        clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'1'+'.mp4')
-                        clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/'+cel+'2'+'.mp4')
-                        clip1_resized = clip1.resize(height=height, width=width)
-                        clip2_resized = clip1.resize(height=height, width=width)
-                        #pygame.display.set_caption('first video!')
-                        clip1_resized.preview()  # 작은화면 디버깅시 이용
-                        # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
-                        pygame.quit()
-                        print ('A')
-                        p = subprocess.Popen('python imviewer.py')
-                        while True:
-                            recognizer = sr.Recognizer()
-                            mic = sr.Microphone(device_index=1)
-                            response = recognize_speech_from_mic(recognizer, mic)
-                            response2 = response['transcription']
-                            if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
-                                print(response2)
-                                p.kill()
-                                break
-                            else:
-                                print(response2)
-
-                        #pygame.display.set_caption('second video!')
-                        clip2_resized.preview()  # 작은화면 디버깅시 이용
-                        # clip2.preview(fullscreen=True)
-                        pygame.quit()
-                        # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
-
+                            #pygame.display.set_caption('second video!')
+                            clip2_resized.preview()  # 작은화면 디버깅시 이용
+                            # clip2.preview(fullscreen=True)
+                            pygame.quit()
+                            # clip2.close() # clip1.close 등 moviepy 명령어인 close 쓰니깐 느림. 팅기는 현상
+                        else :
+                            print ("facepose error")
                     else:
                         print("Error Code:" + rescode)
-            # !!!!!!!!!!!!!!중요!!!!!!!!!!!!!!!
-            # else: # face list 가 없을 때 예외처리방법 작성 필요
+            else:
+                print ("no face lise")
 cap.release()
 cv2.destroyAllWindows()
 
