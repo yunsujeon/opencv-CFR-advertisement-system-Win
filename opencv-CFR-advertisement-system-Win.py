@@ -52,6 +52,7 @@ def recognize_speech_from_mic(recognizer, microphone):
     # from the microphone
     with microphone as source:
         recognizer.adjust_for_ambient_noise(source)
+        print("say something!")
         audio = recognizer.listen(source)
 
     # set up the response object
@@ -95,7 +96,7 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     start = 36
                     end = 62
             elif ifirstages is 2:
-                if facegenders == "male": #남자 20대
+                if facegenders == ("male"or"child"): #남자 20대
                     selectnum = 23
                     start = 3
                     end = 27
@@ -104,7 +105,7 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     start = 3
                     end = 62
             elif ifirstages is 3:
-                if facegenders == "male": #남자30대
+                if facegenders == ("male"or"child"): #남자30대
                     selectnum = 24
                     start = 3
                     end = 27
@@ -165,7 +166,10 @@ def facerecog(faceposes, agelens, firstages, facegenders):
         if faceposenum ==1:
             print (start)
             print (end)
-            manrownum = random.randrange(start, end)
+            if start <= end :
+                manrownum = random.randrange(start, end)
+            else :
+                manrownum = random.randrange(end, start)
             print(manrownum, selectnum)
             cell = sheet.cell(row=manrownum, column=selectnum).value
             err = 0
@@ -254,11 +258,15 @@ while True:
                             pygame.quit()
                             print ('A')
                             p = subprocess.Popen('python imviewer.py')
+
                             while True:
                                 recognizer = sr.Recognizer()
-                                mic = sr.Microphone(device_index=1)
-                                response = recognize_speech_from_mic(recognizer, mic)
+                                microphone = sr.Microphone(device_index=1)
+
+                                response = recognize_speech_from_mic(recognizer, microphone)
                                 response2 = response['transcription']
+                                print(response)
+                                print(response2)
                                 if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
                                     print(response2)
                                     p.kill()
@@ -276,7 +284,7 @@ while True:
                     else:
                         print("Error Code:" + rescode)
             else:
-                print ("no face lise")
+                print ("no face list")
 cap.release()
 cv2.destroyAllWindows()
 
