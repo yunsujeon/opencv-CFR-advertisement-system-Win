@@ -34,9 +34,9 @@ else:
 #print(faceage)
 
 # check information - if do not use it, delete it
-print faceCount
+print (faceCount)
 for i in range(faceCount):
-	print facegender[i], faceage[i]
+	print (facegender[i], faceage[i])
 
 # get average age of each person
 average_age = []
@@ -47,7 +47,7 @@ for i in range(faceCount):
 	# age is under 10
 	else:
 		average_age.append(int(faceage[i][0]) + 2)
-	print average_age[i]
+	print (average_age[i])
 
 male = [0,0,0,0,0,0,0,0,0]
 female = [0,0,0,0,0,0,0,0,0]
@@ -124,8 +124,8 @@ for i in range(faceCount):
 			female[8] += 0.5
 
 #check
-print male
-print female
+print (male)
+print (female)
 
 max_male = 0
 max_female = 0
@@ -145,5 +145,5 @@ for i in range(8):
 		max_female = -1
 
 #check
-print sum(male), sum(female)
-print max_male, max_female
+print (sum(male), sum(female))
+print (max_male, max_female)

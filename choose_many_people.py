@@ -1,118 +1,3 @@
-# import os
-# import sys
-# import requests
-#
-# import json
-#
-# ##### Using Open API(Clova Face Recognition)
-# client_id = "pg4aIiYkw9LxJOpcOTzT"
-# client_secret = "HhKvPRFr8P"
-# url = "https://openapi.naver.com/v1/vision/face" # face recognition
-#
-# files = {'image': open('1.jpeg', 'rb')}
-# headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret }
-# response = requests.post(url,  files=files, headers=headers)
-# rescode = response.status_code
-#
-# ### get information part
-# facegender = []
-# faceage = []
-#
-# if(rescode==200):
-#     #print (response.text)		# get ALL information
-#     data = json.loads(response.text)		#get some information
-#
-#     faceCount = data['info']['faceCount']		#get number of people
-#
-#     for i in data['faces']:	# get people's gender and age
-#     	facegender.append(i['gender']['value'])
-#     	faceage.append(i['age']['value'])
-#
-# else:
-#     print("Error Code:" + str(rescode))
-#
-# # check information
-# print (faceCount)
-# for i in range(faceCount):
-# 	print (facegender[i], faceage[i])
-#
-# # get average age of each person
-# average_age = []
-# for i in range(faceCount):
-# 	average_age.append(int(faceage[i][0] + faceage[i][1]) + 2)
-# 	print (average_age[i])
-#
-# male = [0,0,0,0,0,0,0,0,0]
-# female = [0,0,0,0,0,0,0,0,0]
-#
-# # classify
-# for i in range(faceCount):
-# 	if facegender[i] == "male":
-# 		if 0 < average_age[i] < 10:
-# 			male[0] += 1
-# 		elif 10 <= average_age[i] < 20:
-# 			male[1] += 1
-# 		elif 20 <= average_age[i] < 30:
-# 			male[2] += 1
-# 		elif 30 <= average_age[i] < 40:
-# 			male[3] += 1
-# 		elif 40 <= average_age[i] < 50:
-# 			male[4] += 1
-# 		elif 50 <= average_age[i] < 60:
-# 			male[5] += 1
-# 		elif 60 <= average_age[i] < 70:
-# 			male[6] += 1
-# 		elif 70 <= average_age[i] < 80:
-# 			male[7] += 1
-# 	else:
-# 		if 1 <= average_age[i] < 10:
-# 			female[0] += 1
-# 		elif 10 <= average_age[i] < 20:
-# 			female[1] += 1
-# 		elif 20 <= average_age[i] < 30:
-# 			female[2] += 1
-# 		elif 30 <= average_age[i] < 40:
-# 			female[3] += 1
-# 		elif 40 <= average_age[i] < 50:
-# 			female[4] += 1
-# 		elif 50 <= average_age[i] < 60:
-# 			female[5] += 1
-# 		elif 60 <= average_age[i] < 70:
-# 			female[6] += 1
-# 		elif 70 <= average_age[i] < 80:
-# 			female[7] += 1
-#
-# print (male)
-# print (female)
-#
-# max_male = 0
-# max_female = 0
-#
-# for i in range(8):
-# 	if max(male) != 0:
-# 		if male[i] == max(male):
-# 			max_male = i
-# 	else:
-# 		max_male = -1
-#
-# 	if max(female) != 0:
-# 		if female[i] == max(female):
-# 			max_female = i
-# 	else:
-# 		max_female = -1
-#
-# print (sum(male), sum(female))
-# print (max_male, max_female)
-#
-
-
-
-
-
-
-
-
-
 # import time
 # import numpy as np
 # import moviepy
@@ -129,11 +14,13 @@ import subprocess
 import speech_recognition as sr
 import pygame
 import pyautogui
-
+import math
 try:
 	import Image
 except ImportError:
 	from PIL import Image
+
+screen_id =0
 
 # excel 받아오기
 excel_document = openpyxl.load_workbook('C:/Users/dbstn/Desktop/data.xlsx')
@@ -152,7 +39,7 @@ imgnum = 0
 width, height = pyautogui.size()
 print(width)
 print(height)
-pygame.init()  # 라이브러리 초기화 안해줘도 되긴함
+#pygame.init()  # 라이브러리 초기화 안해줘도 되긴함
 
 
 def recognize_speech_from_mic(recognizer, microphone):
@@ -191,6 +78,58 @@ def recognize_speech_from_mic(recognizer, microphone):
 
 	return response
 
+def selectname(randnumb, response2):
+    print("랜덤한 숫자 : "), randnumb
+    print("실제로 음성 인식한 내용 : "), response2
+    correct = 2
+
+    if (randnumb == 0):
+        print("걸렸네1")
+        if response2 in ('navigation', 'vacation', 'delegation', 'randiation', 'navigate', 'Asian', 'dedication', 'definition', 'litigation', 'baby Asian', 'reggaeton', 'meditation', 'vision', 'Nick Cannon'):
+            correct = 1
+            print("걸렸네2")
+        else:
+            correct = 2
+            print("걸렸네3")
+    elif (randnumb == 1):
+        if response2 in ('happy birthday', 'birthday', 'divorcee', 'North Bay', 'Thursday', 'PRCA', 'Weber State'):
+            correct = 1
+            print("걸렸네4")
+        else:
+            correct = 2
+            print("걸렸네5")
+    elif (randnumb == 2):
+        if response2 in ('English', 'ego-C', 'ngozi', 'Melissa', 'NBC', 'Embassy', 'Blissey', 'Khaleesi', 'Chrissy', "English C", 'sushi', 'Gracie'):
+            correct = 1
+            print("걸렸네6")
+        else:
+            correct = 2
+            print("걸렸네7")
+    elif (randnumb == 3):
+        if response2 in ('Museum', 'medium', 'idiom', 'wake me up at', 'video', 'continuum', 'rhenium', 'resume', 'iridium', 'lithium', 'potassium'):
+            correct = 1
+            print("걸렸네8")
+        else:
+            correct = 2
+            print("걸렸네9")
+    elif (randnumb == 4):
+        if response2 in ('Coca-Cola', 'Aquila', 'koala', 'popular', 'Opera', 'kookaburra', 'Pablo', 'Buffalo'):
+            correct = 1
+            print("걸렸네10")
+        else:
+            correct = 2
+            print("걸렸네11")
+    elif (randnumb == 5):
+        if response2 in ('Hawaii', 'hi', 'how are you'):
+            correct = 1
+            print("걸렸네12")
+        else:
+            correct = 2
+            print("걸렸네13")
+
+    else:
+        print("please say again")
+    return correct
 
 def facerecog(facepose, smale, sfemale, max_male, max_female, facegender):
 	cell = None
@@ -279,13 +218,28 @@ def facerecog(facepose, smale, sfemale, max_male, max_female, facegender):
 		else:
 			cell = None
 			err = 1
+			break
 	return cell, err
 
 while True:
-	if framenum == 2:
+	if framenum == 3:
 		framenum = 0
 	else:
 		framenum = framenum + 1
+
+	randnumb = random.randrange(0, 6)
+	if randnumb == 0:
+		randname = 'navigation'
+	elif randnumb == 1:
+		randname = 'happybirthday'
+	elif randnumb == 2:
+		randname = 'english'
+	elif randnumb == 3:
+		randname = 'museum'
+	elif randnumb == 4:
+		randname = 'cocacola'
+	elif randnumb == 5:
+		randname = 'hawaii'
 
 	ret, frame = cap.read()
 
@@ -294,7 +248,6 @@ while True:
 			break
 		else:
 			ori = frame.copy()  # 나중에 frame 의 원본을 쓰기 위해 ori 에 복사한 것으로 얼굴을 인식시킨다.
-
 			img_gray = cv2.cvtColor(ori, cv2.COLOR_BGR2GRAY)
 			cascade_file = "C:/opencv-4.2.0/haarcascade_frontalface_default.xml "  # https://github.com/opencv/opencv/tree/master/data/haarcascades xml파일 다운경로
 			cascade = cv2.CascadeClassifier(cascade_file)
@@ -309,7 +262,7 @@ while True:
 				# cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3) #n번째가 아닌 인식되는 즉시 즉시를 보려면 이 코드 사용
 				# cv2.imshow('video', frame)
 
-				if framenum == 2:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
+				if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
 					cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
 					cv2.imshow('video', ori)
 
@@ -328,10 +281,14 @@ while True:
 					response = requests.post(url, files=files, headers=headers)
 					rescode = response.status_code
 
-					facegender = []
-					faceage = []
-
 					if (rescode == 200):
+						facepose = '100'
+						smale = '100'
+						sfemale = '100'
+						max_male = '100'
+						max_female = '100'
+						facegender = []
+						faceage = []
 						print(response.text)
 						data = json.loads(response.text)  # https://developers.naver.com/docs/clova/api/CFR/API_Guide.md#%EC%9D%91%EB%8B%B5-2
 						faceCount = data['info']['faceCount']
@@ -356,6 +313,7 @@ while True:
 							# age is under 10
 							else:
 								average_age.append(int(faceage[i][0]) + 2)
+
 							print(average_age[i])
 
 						male = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -402,8 +360,8 @@ while True:
 									female[8] += 1
 							else:	# gender is nethier male nor female, equal weiht
 								if 1 <= average_age[i] < 10:
-									male[0] += 0.5
-									female[0] += 0.5
+									male[0] += 1
+									female[0] += 1
 								elif 10 <= average_age[i] < 20:
 									male[1] += 0.5
 									female[1] += 0.5
@@ -446,7 +404,9 @@ while True:
 								max_female = -1
 
 						smale = sum(male)
+						smale = math.ceil(smale)
 						sfemale = sum(female)
+						sfemale = math.ceil(sfemale)
 						print(male, female) # 남 녀 배열
 						print(smale, sfemale) # 남자 수 여자 수
 						print(max_male, max_female) # 성별별로 가장 많은 나이대
@@ -464,19 +424,38 @@ while True:
 							clip1_resized.preview()  # 작은화면 디버깅시 이용
 							# clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
 							pygame.quit()
-							print('A')
-							p = subprocess.Popen('python imviewer.py')
+
+							# p = subprocess.Popen('exec '+'python imviewer.py',stdout=subprocess.PIPE,shell=True)
+							width, height = pyautogui.size()
+							image = cv2.imread('C:/Users/dbstn/Desktop/' + randname + '.jpg')
+							# cv2.imshow('image',image)
+							# cv2.waitKey(1)
+							print("발음해야 할 단어 : " + randname)
+							window_name = 'projector'
+							cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+							cv2.moveWindow(window_name, width, height)
+							cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+							cv2.imshow(window_name, image)
+							cv2.waitKey(100)
+
 							while True:
 								recognizer = sr.Recognizer()
-								mic = sr.Microphone(device_index=1)
+								mic = sr.Microphone(device_index=2)  # device_index
 								response = recognize_speech_from_mic(recognizer, mic)
 								response2 = response['transcription']
-								if response2 == "snow":  # snow 또는 now 또는 none 등등 예외를 많이 만들어놓기!!! 음성인식 정확도 %의 기준이 될것
-									print(response2)
-									p.kill()
+								correct = selectname(randnumb, response2)
+								print(response)
+								print(response2)
+								print(correct)
+								print("발음해야 할 단어 : " + randname)
+								if correct == 1:
+									print(response2, " >> 변환인식완료 >> ", randname)
+									# p.kill()
 									break
 								else:
-									print(response2)
+									print (response2, " >> 다시 시도해주세요")
+							print("빠져나옴")
+							cv2.destroyAllWindows()
 
 							# pygame.display.set_caption('second video!')
 							clip2_resized.preview()  # 작은화면 디버깅시 이용
