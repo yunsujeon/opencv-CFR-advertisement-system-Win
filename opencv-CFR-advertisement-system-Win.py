@@ -209,7 +209,7 @@ def facerecog(faceposes, agelens, firstages, facegenders):
                     selectnum = 28
                     start = 3
                     end = 62
-        if iagelens < 5:
+        elif iagelens < 5:
             if -1 < ifirstages < 10:
                 if facegenders == ("male" or "child"):  # 남자 0대
                     selectnum = 21
@@ -342,8 +342,8 @@ while True:
 
                             #p = subprocess.Popen('python imviewer.py')
                             width, height = pyautogui.size()
-                            image = cv2.imread(
-                                'C:/Users/dbstn/Desktop/' + randname + '.jpg')
+                            image = cv2.imread('C:/Users/dbstn/Desktop/' + randname + '.jpg')
+                            novoiceimg = cv2.imread('C:/Users/dbstn/Desktop/again.PNG')
                             # cv2.imshow('image',image)
                             # cv2.waitKey(1)
                             print("발음해야 할 단어 : " + randname)
@@ -357,7 +357,6 @@ while True:
                             while True:
                                 recognizer = sr.Recognizer()
                                 microphone = sr.Microphone(device_index=1)
-
                                 response = recognize_speech_from_mic(recognizer, microphone)
                                 response2 = response['transcription']
                                 correct = selectname(randnumb, response2)
@@ -367,12 +366,25 @@ while True:
                                 print("발음해야 할 단어 : " + randname)
                                 if correct == 1:
                                     print (response2, " >> 변환인식완료 >> ", randname)
-                                    # p.kill()
+                                    cv2.destroyAllWindows()
+                                    #p.kill()
                                     break
                                 else:
                                     print (response2, " >> 다시 시도해주세요" )
-                            print("빠져나옴")
-                            cv2.destroyAllWindows()
+                                    cv2.destroyAllWindows()
+                                    window_name = 'projector'
+                                    cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+                                    cv2.moveWindow(window_name, width, height)
+                                    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                                    cv2.imshow(window_name, novoiceimg)
+                                    cv2.waitKey(1000)
+                                    cv2.destroyAllWindows()
+                                    window_name = 'projector'
+                                    cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+                                    cv2.moveWindow(window_name, width, height)
+                                    cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+                                    cv2.imshow(window_name, image)
+                                    cv2.waitKey(1)
 
                             # pygame.display.set_caption('second video!')
                             clip2_resized.preview()  # 작은화면 디버깅시 이용
