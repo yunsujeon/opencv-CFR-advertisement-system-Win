@@ -53,8 +53,10 @@ def recognize_speech_from_mic(recognizer, microphone):
 	# adjust the recognizer sensitivity to ambient noise and record audio
 	# from the microphone
 	with microphone as source:
-		recognizer.adjust_for_ambient_noise(source)
+		recognizer.adjust_for_ambient_noise(source,duration=1)
+		print("say something")
 		audio = recognizer.listen(source)
+		print("end recognize")
 
 	# set up the response object
 	response = {
@@ -84,48 +86,35 @@ def selectname(randnumb, response2):
     correct = 2
 
     if (randnumb == 0):
-        print("걸렸네1")
         if response2 in ('navigation', 'vacation', 'delegation', 'randiation', 'navigate', 'Asian', 'dedication', 'definition', 'litigation', 'baby Asian', 'reggaeton', 'meditation', 'vision', 'Nick Cannon'):
             correct = 1
-            print("걸렸네2")
         else:
             correct = 2
-            print("걸렸네3")
     elif (randnumb == 1):
         if response2 in ('happy birthday', 'birthday', 'divorcee', 'North Bay', 'Thursday', 'PRCA', 'Weber State'):
             correct = 1
-            print("걸렸네4")
         else:
             correct = 2
-            print("걸렸네5")
     elif (randnumb == 2):
         if response2 in ('English', 'ego-C', 'ngozi', 'Melissa', 'NBC', 'Embassy', 'Blissey', 'Khaleesi', 'Chrissy', "English C", 'sushi', 'Gracie'):
             correct = 1
-            print("걸렸네6")
         else:
             correct = 2
-            print("걸렸네7")
     elif (randnumb == 3):
         if response2 in ('Museum', 'medium', 'idiom', 'wake me up at', 'video', 'continuum', 'rhenium', 'resume', 'iridium', 'lithium', 'potassium'):
             correct = 1
-            print("걸렸네8")
         else:
             correct = 2
-            print("걸렸네9")
     elif (randnumb == 4):
         if response2 in ('Coca-Cola', 'Aquila', 'koala', 'popular', 'Opera', 'kookaburra', 'Pablo', 'Buffalo'):
             correct = 1
-            print("걸렸네10")
         else:
             correct = 2
-            print("걸렸네11")
     elif (randnumb == 5):
         if response2 in ('Hawaii', 'hi', 'how are you'):
             correct = 1
-            print("걸렸네12")
         else:
             correct = 2
-            print("걸렸네13")
 
     else:
         print("please say again")
@@ -135,7 +124,10 @@ def facerecog(facepose, smale, sfemale, max_male, max_female, facegender):
 	cell = None
 	start = 0
 	end = 0
-	if facepose == "frontal_face" or "left_face" or "right_face" or "rotate_face" : #여러명일때 facepose는 좀 이상한 감이 있지만..
+	if facepose == '100' or smale == '100' or sfemale == '100' or max_male == '100' or max_female == '100' or facegender == '100':
+		faceposenum = 2
+		print("recognize face error")
+	elif facepose == "frontal_face" or "left_face" or "right_face" or "rotate_face":  # 여러명일때 facepose는 좀 이상한 감이 있지만..
 		faceposenum = 1
 		if smale > sfemale :
 			if max_male == 0:
@@ -211,7 +203,10 @@ def facerecog(facepose, smale, sfemale, max_male, max_female, facegender):
 		if faceposenum == 1:
 			print(start)
 			print(end)
-			manrownum = random.randrange(start, end)
+			if start <= end:
+				manrownum = random.randrange(start, end)
+			else:
+				manrownum = random.randrange(end, start)
 			print(manrownum, selectnum)
 			cell = sheet.cell(row=manrownum, column=selectnum).value
 			err = 0
@@ -264,7 +259,7 @@ while True:
 
 				if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
 					cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
-					cv2.imshow('video', ori)
+					#cv2.imshow('video', ori)
 
 					#crop = ori[y + 5:y + h - 5, x + 5:x + w - 5]  # 크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
 					#imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
@@ -407,6 +402,7 @@ while True:
 						smale = math.ceil(smale)
 						sfemale = sum(female)
 						sfemale = math.ceil(sfemale)
+						sgen = smale+sfemale
 						print(male, female) # 남 녀 배열
 						print(smale, sfemale) # 남자 수 여자 수
 						print(max_male, max_female) # 성별별로 가장 많은 나이대
@@ -419,43 +415,42 @@ while True:
 							clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/' + cel + '1' + '.mp4')
 							clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/' + cel + '2' + '.mp4')
 							clip1_resized = clip1.resize(height=height, width=width)
-							clip2_resized = clip1.resize(height=height, width=width)
+							clip2_resized = clip2.resize(height=height, width=width)
 							# pygame.display.set_caption('first video!')
 							clip1_resized.preview()  # 작은화면 디버깅시 이용
 							# clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
 							pygame.quit()
 
-							# p = subprocess.Popen('exec '+'python imviewer.py',stdout=subprocess.PIPE,shell=True)
-							width, height = pyautogui.size()
-							image = cv2.imread('C:/Users/dbstn/Desktop/' + randname + '.jpg')
-							# cv2.imshow('image',image)
-							# cv2.waitKey(1)
-							print("발음해야 할 단어 : " + randname)
-							window_name = 'projector'
-							cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
-							cv2.moveWindow(window_name, width, height)
-							cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-							cv2.imshow(window_name, image)
-							cv2.waitKey(100)
+							if sgen == 1:
+								# p = subprocess.Popen('exec '+'python imviewer.py',stdout=subprocess.PIPE,shell=True)
+								width, height = pyautogui.size()
 
-							while True:
-								recognizer = sr.Recognizer()
-								mic = sr.Microphone(device_index=2)  # device_index
-								response = recognize_speech_from_mic(recognizer, mic)
-								response2 = response['transcription']
-								correct = selectname(randnumb, response2)
-								print(response)
-								print(response2)
-								print(correct)
+								image = cv2.imread('C:/Users/dbstn/Desktop/' + randname + '.jpg')
+								# cv2.imshow('image',image)
+								# cv2.waitKey(1)
 								print("발음해야 할 단어 : " + randname)
-								if correct == 1:
-									print(response2, " >> 변환인식완료 >> ", randname)
-									# p.kill()
-									break
-								else:
-									print (response2, " >> 다시 시도해주세요")
-							print("빠져나옴")
-							cv2.destroyAllWindows()
+								window_name = 'projector'
+								cv2.namedWindow(window_name, cv2.WND_PROP_FULLSCREEN)
+								cv2.moveWindow(window_name, width, height)
+								cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+								cv2.imshow(window_name, image)
+								cv2.waitKey(100)
+								while True:
+									recognizer = sr.Recognizer()
+									mic = sr.Microphone(device_index=1)  # device_index
+									response = recognize_speech_from_mic(recognizer, mic)
+									response2 = response['transcription']
+									correct = selectname(randnumb, response2)
+									print(response)
+									print(response2)
+									print(correct)
+									if correct == 1:
+										print(response2, " >> 변환인식완료 >> ", randname)
+										# p.kill()
+										break
+									else:
+										print (response2, " >> 다시 시도해주세요")
+								cv2.destroyAllWindows()
 
 							# pygame.display.set_caption('second video!')
 							clip2_resized.preview()  # 작은화면 디버깅시 이용

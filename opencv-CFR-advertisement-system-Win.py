@@ -86,49 +86,35 @@ def selectname(randnumb, response2):
     correct = 2
 
     if (randnumb == 0):
-        print("걸렸네1")
         if response2 in ('navigation', 'vacation', 'delegation', 'randiation', 'navigate', 'Asian', 'dedication', 'definition', 'litigation', 'baby Asian', 'reggaeton', 'meditation', 'vision', 'Nick Cannon'):
             correct = 1
-            print("걸렸네2")
         else:
             correct = 2
-            print("걸렸네3")
     elif (randnumb == 1):
         if response2 in ('happy birthday', 'birthday', 'divorcee', 'North Bay', 'Thursday', 'PRCA', 'Weber State'):
             correct = 1
-            print("걸렸네4")
         else:
             correct = 2
-            print("걸렸네5")
     elif (randnumb == 2):
         if response2 in ('English', 'ego-C', 'ngozi', 'Melissa', 'NBC', 'Embassy', 'Blissey', 'Khaleesi', 'Chrissy', "English C", 'sushi', 'Gracie'):
             correct = 1
-            print("걸렸네6")
         else:
             correct = 2
-            print("걸렸네7")
     elif (randnumb == 3):
         if response2 in ('Museum', 'medium', 'idiom', 'wake me up at', 'video', 'continuum', 'rhenium', 'resume', 'iridium', 'lithium', 'potassium'):
             correct = 1
-            print("걸렸네8")
         else:
             correct = 2
-            print("걸렸네9")
     elif (randnumb == 4):
         if response2 in ('Coca-Cola', 'Aquila', 'koala', 'popular', 'Opera', 'kookaburra', 'Pablo', 'Buffalo'):
             correct = 1
-            print("걸렸네10")
         else:
             correct = 2
-            print("걸렸네11")
     elif (randnumb == 5):
         if response2 in ('Hawaii', 'hi', 'how are you'):
             correct = 1
-            print("걸렸네12")
         else:
             correct = 2
-            print("걸렸네13")
-
     else:
         print("please say again")
     return correct
@@ -240,7 +226,6 @@ def facerecog(faceposes, agelens, firstages, facegenders):
     print (cell,err)
     return cell, err
 
-
 while True:
     if framenum == 3:
         framenum = 0
@@ -284,7 +269,7 @@ while True:
 
                 if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
                     cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
-                    cv2.imshow('video', ori)
+                    #cv2.imshow('video', ori)
 
                     #crop = ori[y + 5:y + h - 5, x + 5:x + w - 5]  # 크롭이미지로 이미지 판별 빨간 줄은 저장하지않도록 선의 굵기만큼 빼고 더한다.
                     #imgpath = ('C:/Users/dbstn/Desktop/nene/cropimg%d.jpg' % (imgnum))
