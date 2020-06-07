@@ -318,7 +318,7 @@ while True:
                             clip1 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/' + cel + '1' + '.mp4')
                             clip2 = VideoFileClip('C:/Users/dbstn/Desktop/ad_new/' + cel + '2' + '.mp4')
                             clip1_resized = clip1.resize(height=height, width=width)
-                            clip2_resized = clip1.resize(height=height, width=width)
+                            clip2_resized = clip2.resize(height=height, width=width)
                             # pygame.display.set_caption('first video!')
                             clip1_resized.preview()  # 작은화면 디버깅시 이용
                             # clip1.preview(fullscreen=True) # 모든화면에서 풀스크린으로 되면 하기 but 팅기더라
