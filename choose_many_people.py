@@ -256,7 +256,6 @@ while True:
 					x, y, w, h = face
 				# cv2.rectangle(frame, (x, y), (x + w, y + h), color[0], thickness=3) #n번째가 아닌 인식되는 즉시 즉시를 보려면 이 코드 사용
 				# cv2.imshow('video', frame)
-
 				if framenum == 3:  # 처음 얼굴을 인식했을 때 말고 시간이 약간 지난 후의 x 번째 프레임을 캡쳐한다.
 					cv2.rectangle(ori, (x, y), (x + w, y + h), color[0], thickness=3)
 					#cv2.imshow('video', ori)
@@ -435,6 +434,15 @@ while True:
 								cv2.setWindowProperty(window_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 								cv2.imshow(window_name, image)
 								cv2.waitKey(100)
+
+								#현재는 음성인식을 통한 input을 통해 인터럽트를 받고있음
+								#다른 방식의 정확도가 높은 input 을 통해 구현 할 것
+								#여러 입력방식들을 랜덤으로 채택해서 내보일 수 도 있을것
+								#터치 - 모든 스크린이 터치가 아니기때문에 안될것
+								#별도의 입력기기 - 적외선센서의 앞을 막는다거나 (너무 일차원적인 하드웨어적 방법) - but 이걸 여러개 만들면 될것
+								#예를 들어서 적외선 입구를 다섯개 만들어놓고 1,5번 센서를 가려라**********************
+								#or 적외선 센서가 하나라면 초음파도 만들어놓고 온도도 만들어놔서 or 인체감지 - 뭐 를 만져라 이렇게
+
 								while True:
 									recognizer = sr.Recognizer()
 									mic = sr.Microphone(device_index=1)  # device_index
