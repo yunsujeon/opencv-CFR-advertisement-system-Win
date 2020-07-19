@@ -120,16 +120,16 @@ def selectname(randnumb, response2):
         print("please say again")
     return correct
 
-def facerecog(facepose, summale, sumfemale, max_male, max_female, facegender):
+def facerecog(facepose, sum_male, sum_female, max_male, max_female, facegender):
 	cell = None
 	start = 0
 	end = 0
-	if facepose == '100' or summale == '100' or sumfemale == '100' or max_male == '100' or max_female == '100' or facegender == '100':
+	if facepose == '100' or sum_male == '100' or sum_female == '100' or max_male == '100' or max_female == '100' or facegender == '100':
 		faceposenum = 2
 		print("recognize face error")
 	elif facepose == "frontal_face" or "left_face" or "right_face" or "rotate_face":  # 여러명일때 facepose는 좀 이상한 감이 있지만..
 		faceposenum = 1
-		if summale > sumfemale :
+		if sum_male > sum_female :
 			if max_male == 0:
 				selectnum = 21
 				start = 3
@@ -162,7 +162,7 @@ def facerecog(facepose, summale, sumfemale, max_male, max_female, facegender):
 				selectnum = 28
 				start = 3
 				end = 27
-		elif summale <= sumfemale :
+		elif sum_male <= sum_female :
 			if max_female == 0:
 				selectnum = 21
 				start = 3
@@ -277,8 +277,8 @@ while True:
 
 					if (rescode == 200):
 						facepose = '100'
-						summale = '100'
-						sumfemale = '100'
+						sum_male = '100'
+						sum_female = '100'
 						max_male = '100'
 						max_female = '100'
 						facegender = []
@@ -397,16 +397,16 @@ while True:
 							else:
 								max_female = -1
 
-						summale = sum(male)
-						summale = math.ceil(summale)
-						sumfemale = sum(female)
-						sumfemale = math.ceil(sumfemale)
-						sgen = summale+sumfemale
+						sum_male = sum(male)
+						sum_male = math.ceil(sum_male)
+						sum_female = sum(female)
+						sum_female = math.ceil(sum_female)
+						sgen = sum_male+sum_female
 						print(male, female) # 남 녀 배열
-						print(summale, sumfemale) # 남자 수 여자 수
+						print(sum_male, sum_female) # 남자 수 여자 수
 						print(max_male, max_female) # 성별별로 가장 많은 나이대
 
-						cel, err = facerecog(facepose, summale, sumfemale, max_male, max_female, facegender)
+						cel, err = facerecog(facepose, sum_male, sum_female, max_male, max_female, facegender)
 
 						if err == 0 :
 							print(cel)
